@@ -1,0 +1,1 @@
+Error: Could not find or load main class .home.ams.Dropbox.GitHub.blockbattle-engine.com.theaigames.blockbattle.Blockbattle
