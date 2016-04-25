@@ -41,13 +41,6 @@ class NaiveStrategy(AbstractStrategy):
     	i = -1
     	j = -1
 
-    	# for col in len(field[0]):
-    	# 	j+=1
-    	# 	for row in len(field):
-    	# 		i+=1
-    	# 		if(row == 1):
-    	# 			arrTopVals[j] = row
-
     	for col in range(10):
     		for row in range(20):
     			if row == 1:
