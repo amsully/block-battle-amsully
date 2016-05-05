@@ -34,8 +34,11 @@ public class StrategyProcessor {
 
                 for (int i = 0; i < tempCurrentShape.getRotations(); i++) {
                         if (i != 0) {
-                                tempCurrentShape.turnRight();
-                                tempResult.addMove(MoveType.TURNRIGHT);
+                                tempCurrentShape.turnRight(i);
+                                
+                                for(int j = 0; j < i; j++){
+                                        tempResult.addMove(MoveType.TURNRIGHT);
+                                }
                         }
 
                         int moveLeftCount = 0;
@@ -53,7 +56,16 @@ public class StrategyProcessor {
                                 tempCurrentShape.oneRight();
                                 tempResult.removeLastMove();
                         }
-
+                        
+                        
+                        // Turn the shape back and remove moves.
+                        if (i != 0) {
+                                tempCurrentShape.turnLeft(i);
+                                
+                                for(int j = 0; j < i; j++){
+                                        tempResult.removeLastMove();
+                                }
+                        }
                 }
 
         }
@@ -110,7 +122,12 @@ public class StrategyProcessor {
                 /*
                  * ONE LOOKAHEAD
                  */
-                
+                if(nextShape != null){
+//                        tempField.removeCompletedLines();
+                        StrategyProcessor lookaheadProcessor = new StrategyProcessor(nextShape, null, tempField);
+                        lookaheadProcessor.run();
+                        tempResult.score += lookaheadProcessor.getBest().score;
+                }
                 
                 write("temp: " + tempResult.score + " best: " + best.score);
                 

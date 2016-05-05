@@ -70,6 +70,13 @@ public class Shape {
 
                 this.setBlockLocations();
         }
+        
+        public void turnLeft(int turns) {
+                // TODO Auto-generated method stub
+                for(int i = 0; i < turns; i++){
+                        this.turnLeft();
+                }
+        }
 
         /**
          * Rotates the shape clockwise
@@ -83,6 +90,14 @@ public class Shape {
 
                 this.setBlockLocations();
         }
+        
+        public void turnRight(int turns) {
+                // TODO Auto-generated method stub
+                for(int i = 0; i < turns; i++){
+                        this.turnRight();
+                }
+        }
+
 
         public void oneDown() {
 
@@ -260,6 +275,9 @@ public class Shape {
                 }
                 return false;
         }
+
+
+
 
 
 }
