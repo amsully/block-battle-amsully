@@ -48,6 +48,11 @@ public class StrategyProcessor {
                         }
 
                         exploreRight(tempCurrentShape);
+                        
+                        for(int j = 0; j < moveLeftCount-1; j++){
+                                tempCurrentShape.oneRight();
+                                tempResult.removeLastMove();
+                        }
 
                 }
 
@@ -77,12 +82,19 @@ public class StrategyProcessor {
                         }
 
                         evaluateFinalPosition(currentShape);
+                        
                         // Return shape back to top.
                         for (int i = 0; i < numberDown; i++) {
                                 currentShape.oneUp();
                                 tempResult.removeLastMove();
                         }
                         moveRightCount++;
+                }
+                
+                // Remove all previous right moves.
+                for(int i = 0; i < moveRightCount-1; i++){
+                        currentShape.oneLeft();
+                        tempResult.removeLastMove();
                 }
         }
 
@@ -95,7 +107,17 @@ public class StrategyProcessor {
                 
                 tempResult.score = tempField.evaluateScore();
                 
+                /*
+                 * ONE LOOKAHEAD
+                 */
+                
+                
+                write("temp: " + tempResult.score + " best: " + best.score);
+                
                 if (tempResult.getScore() > best.getScore()) {
+                        
+                        write("NEW BEST: " + tempResult.moves.toString());
+                        
                         best.setMoves(tempResult.moves);
                         best.setScore(tempResult.score);
                 }

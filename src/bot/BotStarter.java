@@ -82,7 +82,10 @@ public class BotStarter {
 
                 Result bestResult = processor.getBest();
                 
+                
                 bestResult.moves.add(MoveType.DOWN);
+                
+                write(bestResult.moves.toString());
                 return bestResult.moves;
         }
 
