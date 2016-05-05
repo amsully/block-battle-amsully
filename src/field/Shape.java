@@ -243,14 +243,23 @@ public class Shape {
         }
 
         public int getRotations() {
-                // TODO Auto-generated method stub
                 return (this.type == ShapeType.I) ? 2 : (this.type == ShapeType.O) ? 1 : 4;
         }
 
         public Shape copyShape(Field currentField) {
-                // TODO Auto-generated method stub
-//                public Shape(ShapeType type, Field field, Point location) {
 
                 return new Shape(this.type, currentField, this.location);
         }
+
+        public boolean isOutOfBoundaries(Field field2) {
+                
+                for(Cell c : this.getBlocks()){
+                        if( c.isOutOfBoundaries(field2) && c.getLocation().y != -1){
+                                return true;
+                        }
+                }
+                return false;
+        }
+
+
 }

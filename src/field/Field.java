@@ -88,18 +88,63 @@ public class Field {
         public boolean canMoveLeft(Shape currentShape) {
                 // TODO Auto-generated method stub
 
+                currentShape.oneLeft();
+                boolean result = true;
                 for (Cell cellBlock : currentShape.getBlocks()) {
                         Cell fieldBlock = getCell(cellBlock.getLocation().x, cellBlock.getLocation().y);
+                        
                         if (fieldBlock == null && cellBlock.getLocation().y != -1) {
-                                return false;
-                        } else if (fieldBlock == null) {
-                                return false;
-                        } else if (!fieldBlock.isEmpty() && !fieldBlock.isShape()) {
-                                return false;
+                                result = false;
+                                break;
+                        } else if (fieldBlock != null && !fieldBlock.isEmpty() && !fieldBlock.isShape()) {
+                                result = false;
+                                break;
                         }
                 }
 
-                return true;
+                currentShape.oneRight();
+                return result;
+        }
+
+        public boolean canMoveRight(Shape currentShape) {
+                // TODO Auto-generated method stub
+                currentShape.oneRight();
+                boolean result = true;
+                for (Cell cellBlock : currentShape.getBlocks()) {
+
+                        Cell fieldBlock = getCell(cellBlock.getLocation().x, cellBlock.getLocation().y);
+
+                        if (fieldBlock == null && cellBlock.getLocation().y != -1) {
+                                result = false;
+                                break;
+                        } else if (fieldBlock != null && !fieldBlock.isEmpty() && !fieldBlock.isShape()) {
+                                result = false;
+                                break;
+                        }
+                }
+
+                currentShape.oneLeft();
+                write("return!");
+                return result;
+        }
+
+        public boolean canMoveDown(Shape currentShape) {
+                // TODO Auto-generated method stub
+                currentShape.oneDown();
+                boolean result = true;
+                for (Cell cellBlock : currentShape.getBlocks()) {
+                        Cell fieldBlock = getCell(cellBlock.getLocation().x, cellBlock.getLocation().y);
+                        if (fieldBlock == null && cellBlock.getLocation().y != -1) {
+                                result = false;
+                                break;
+                        } else if (fieldBlock != null && !fieldBlock.isEmpty() && !fieldBlock.isShape()) {
+                                result = false;
+                                break;
+                        }
+                }
+
+                currentShape.oneUp();
+                return result;
         }
 
         public Field copyField() {
@@ -140,6 +185,23 @@ public class Field {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                 }
+        }
+
+        public double evaluateScore() {
+                // TODO Auto-generated method stub
+                return 0;
+        }
+
+        // Required that we already know this is a valid block.
+        public void setBlock(Shape currentShape) {
+
+                Cell[] blocks = currentShape.getBlocks();
+
+                for (Cell c : blocks) {
+                        Cell fieldCell = getCell(c.getLocation().x, c.getLocation().y);
+                        fieldCell.setShape();
+                }
+
         }
 
 }
