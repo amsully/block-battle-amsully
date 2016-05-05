@@ -49,8 +49,6 @@ import moves.MoveType;
 
 public class BotStarter {
 
-        static int numberOfRotations;
-
         public BotStarter() {
         }
 
@@ -64,16 +62,60 @@ public class BotStarter {
          * @return : a list of moves to execute
          */
         public ArrayList<MoveType> getMoves(BotState state, long timeout) {
+                ArrayList<MoveType> moves = new ArrayList<MoveType>();
 
-                
+                Shape currentShape;
+                Shape nextShape;
+                Field field = state.getMyField();
 
+                // Create current shape.
+                Point location = state.getShapeLocation();
+                ShapeType type = state.getCurrentShape();
+                currentShape = new Shape(type, field, location);
+
+                // Create next shape.
+                ShapeType nType = state.getNextShape();
+                Point nLocation = (nType == ShapeType.O) ? new Point(4, -1) : new Point(3, -1);
+                nextShape = new Shape(nType, field, nLocation);
+
+                moves = searchSpace(currentShape, nextShape, field);
+
+                moves.add(MoveType.DOWN);
+                return moves;
         }
 
-        private Result searchSpace() {
+        private ArrayList<MoveType> searchSpace(Shape shape, Shape nextShape, Field field) {
+                ArrayList<MoveType> moves = new ArrayList<MoveType>();
 
+                Field currentField = field.copyField();
+                Shape currentShape = shape.copyShape(currentField);
                 
-        }
+                for (int i = 0; i < currentShape.getRotations(); i++) {
+                        if(i != 0){
+                                currentShape.turnRight();
+                                moves.add(MoveType.TURNRIGHT);
+                        }
+                        
+                        while (currentField.canMoveLeft(currentShape)) {
+                                currentShape.oneLeft();
+                                moves.add(MoveType.LEFT);
+                        }
+                        
+                        int moveRight = 0;
+                        while(currentField.canMoveRight(currentShape)){
+                                if(moveRight != 0){
+                                        moves.add(MoveType.RIGHT);
+                                        currentShape.turnRight();
+                                }
+                                
+                                moveRight++;
+                        }
+                        
 
+                }
+
+                return moves;
+        }
 
         public static void main(String[] args) {
                 BotParser parser = new BotParser(new BotStarter());

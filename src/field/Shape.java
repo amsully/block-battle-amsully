@@ -241,4 +241,16 @@ public class Shape {
         public Cell[][] getShapeBox() {
                 return this.shape;
         }
+
+        public int getRotations() {
+                // TODO Auto-generated method stub
+                return (this.type == ShapeType.I) ? 2 : (this.type == ShapeType.O) ? 1 : 4;
+        }
+
+        public Shape copyShape(Field currentField) {
+                // TODO Auto-generated method stub
+//                public Shape(ShapeType type, Field field, Point location) {
+
+                return new Shape(this.type, currentField, this.location);
+        }
 }
