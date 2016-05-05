@@ -38,33 +38,37 @@ public class StrategyProcessor {
                                 tempResult.addMove(MoveType.TURNRIGHT);
                         }
 
+                        int moveLeftCount = 0;
                         while (field.canMoveLeft(tempCurrentShape)) {
-                                tempCurrentShape.oneLeft();
-                                tempResult.addMove(MoveType.LEFT);
+                                if (moveLeftCount != 0) {
+                                        tempCurrentShape.oneLeft();
+                                        tempResult.addMove(MoveType.LEFT);
+                                }
+                                moveLeftCount++;
                         }
 
                         exploreRight(tempCurrentShape);
+
                 }
 
         }
 
         private void exploreRight(Shape currentShape) {
                 // TODO Auto-generated method stub
-                int moveRight = 0;
+                int moveRightCount = 0;
 
                 while (field.canMoveRight(currentShape)) {
                         if (currentShape.isOutOfBoundaries(field)) {
                                 continue;
                         }
 
-                        if (moveRight != 0) {
+                        if (moveRightCount != 0) {
                                 tempResult.addMove(MoveType.RIGHT);
                                 currentShape.oneRight();
                         }
 
                         // Move all the way down.
                         int numberDown = 0;
-                        
 
                         while (field.canMoveDown(currentShape)) {
                                 tempResult.addMove(MoveType.DOWN);
@@ -73,22 +77,24 @@ public class StrategyProcessor {
                         }
 
                         evaluateFinalPosition(currentShape);
-
                         // Return shape back to top.
                         for (int i = 0; i < numberDown; i++) {
                                 currentShape.oneUp();
                                 tempResult.removeLastMove();
                         }
-                        moveRight++;
+                        moveRightCount++;
                 }
         }
 
         private void evaluateFinalPosition(Shape currentShape) {
                 // TODO Auto-generated method stub
+                
                 Field tempField = field.copyField();
+                
                 tempField.setBlock(currentShape);
+                
                 tempResult.score = tempField.evaluateScore();
-
+                
                 if (tempResult.getScore() > best.getScore()) {
                         best.setMoves(tempResult.moves);
                         best.setScore(tempResult.score);

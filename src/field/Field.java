@@ -87,7 +87,6 @@ public class Field {
 
         public boolean canMoveLeft(Shape currentShape) {
                 // TODO Auto-generated method stub
-
                 currentShape.oneLeft();
                 boolean result = true;
                 for (Cell cellBlock : currentShape.getBlocks()) {
@@ -108,6 +107,8 @@ public class Field {
 
         public boolean canMoveRight(Shape currentShape) {
                 // TODO Auto-generated method stub
+
+                
                 currentShape.oneRight();
                 boolean result = true;
                 for (Cell cellBlock : currentShape.getBlocks()) {
@@ -124,7 +125,6 @@ public class Field {
                 }
 
                 currentShape.oneLeft();
-                write("return!");
                 return result;
         }
 
@@ -171,7 +171,6 @@ public class Field {
                         strBldr.append(";");
                 }
 
-                write(strBldr.toString().substring(0, strBldr.length() - 1));
                 return strBldr.toString().substring(0, strBldr.length() - 1);
         }
 
@@ -199,6 +198,9 @@ public class Field {
 
                 for (Cell c : blocks) {
                         Cell fieldCell = getCell(c.getLocation().x, c.getLocation().y);
+                        
+                        if(fieldCell == null) continue;
+                        
                         fieldCell.setShape();
                 }
 

@@ -10,6 +10,8 @@ public class Result {
         double score;
 
         public Result() {
+                moves = new ArrayList<MoveType>();
+                score = -Double.MAX_VALUE;
         }
 
         public void setMoves(ArrayList<MoveType> moves) {
