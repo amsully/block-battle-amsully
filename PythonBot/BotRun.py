@@ -1,5 +1,4 @@
 from sys import stdin, stdout
-
 from Bot import Planner
 from Bot.Game.Game import Game
 from Bot.Parser import Parser
@@ -10,6 +9,7 @@ class Bot:
         self.game = Game()
         self._parser = Parser(self.game)
         self._planner = Planner.create(strategy, self.game)
+        self._writer = open('bot.txt','wb')
 
     def run(self):
         while not stdin.closed:
@@ -19,6 +19,9 @@ class Bot:
                 if len(line) == 0:
                     continue
 
+                # REMEMBER TO COMMENT THIS OUT!
+                self._writer.write(line + '\n')
+               
                 moves = self.interpret(line)
 
                 if moves:
@@ -40,4 +43,4 @@ class Bot:
 
 
 if __name__ == '__main__':
-    Bot("naive").run()
+    Bot("bestfit2").run()

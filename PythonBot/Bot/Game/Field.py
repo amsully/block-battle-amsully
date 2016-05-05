@@ -44,6 +44,7 @@ class Field:
         return True
 
     def fitPiece(self, piecePositions, offset=None):
+
         if offset:
             piece = self.__offsetPiece(piecePositions, offset)
         else:
@@ -53,7 +54,17 @@ class Field:
         if self.__checkIfPieceFits(piece):
             for x,y in piece:
                 field[y][x] = 4
-
             return field
         else:
             return None
+
+    def pieceFits(self, piecePositions, offset=None):
+        if offset:
+            piece = self.__offsetPiece(piecePositions, offset)
+        else:
+            piece = piecePositions
+
+        if self.__checkIfPieceFits(piece):
+            return True
+        else:
+            return False
