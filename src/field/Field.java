@@ -218,11 +218,18 @@ public class Field {
 
         public double evaluateScore(Shape currentShape) {
                 // TODO Auto-generated method stub
-                int adjacent = getAdjacentBlockCount(currentShape);
-                int completedRows = getCompletedRows(currentShape);
-                int holes = getHoles(currentShape);
-                return (-maxHeight) + (adjacent * .75) + (completedRows * 3) + (holes * -2);
-                // return adjacent;
+                double adjacent = getAdjacentBlockCount(currentShape);
+                double completedRows = getCompletedRows(currentShape);
+                double holes = getHoles(currentShape);
+
+                double averageHeight = getAverageHeight();
+                double resultingHeight = maxHeight - completedRows;
+
+                double hole_parameter = -20 / Math.pow(maxHeight, 2);
+
+                return (averageHeight * -.5) + (resultingHeight * -10) + (adjacent * 5) + (completedRows * 2)
+                                + (holes * hole_parameter);
+
         }
 
         private int getAdjacentBlockCount(Shape currentShape) {
@@ -286,10 +293,10 @@ public class Field {
                         boolean countHole = false;
                         for (int j = maxHeight - 1; j < this.height; j++) {
                                 Cell c = grid[i][j];
-                                if (!c.isEmpty() ) {
+                                if (!c.isEmpty()) {
                                         countHole = true;
                                 }
-                                if (countHole && c.isEmpty() ) {
+                                if (countHole && c.isEmpty()) {
                                         hole_count++;
                                 }
                         }
@@ -298,6 +305,24 @@ public class Field {
                 return hole_count;
         }
 
+        public double getAverageHeight() {
+                // TODO Auto-generated method stub
+                double heightOfBoard = grid[0].length;
+
+                double total = 0;
+
+                for (int i = 0; i < grid.length; i++) {
+                        for (int j = 0; j < grid[0].length; j++) {
+                                Cell c = grid[i][j];
+                                if (!c.isEmpty()) {
+                                        double height = heightOfBoard - c.getLocation().getY();
+                                        total += height;
+                                        break;
+                                }
+                        }
+                }
+                return total / grid.length;
+        }
 }
 
 // public double evaluateScore(Shape currShape) {
