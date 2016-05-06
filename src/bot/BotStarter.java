@@ -85,7 +85,7 @@ public class BotStarter {
                 
                 bestResult.moves.add(MoveType.DOWN);
                 
-                write(bestResult.moves.toString());
+                write("ROUND " + state.getRound() + ": " +  bestResult.moves.toString());
                 return bestResult.moves;
         }
 

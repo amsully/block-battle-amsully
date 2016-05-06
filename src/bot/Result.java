@@ -42,4 +42,11 @@ public class Result {
                 moves.remove(moves.size()-1);
         }
 
+        public MoveType lastMove() {
+                // TODO Auto-generated method stub
+                if(moves.isEmpty()) return null;
+                
+                return moves.get(moves.size()-1);
+        }
+
 }

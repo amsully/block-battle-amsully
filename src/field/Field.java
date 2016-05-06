@@ -68,8 +68,7 @@ public class Field {
                         for (int x = 0; x < this.width; x++) {
                                 int cellCode = Integer.parseInt(rowCells[x]);
                                 this.grid[x][y] = new Cell(x, y, CellType.values()[cellCode]);
-                                
-                                
+
                                 updateMax(this.grid[x][y], y);
 
                         }
@@ -79,8 +78,8 @@ public class Field {
         // Updates the max. This does not consider 'shape' blocks.
         private void updateMax(Cell cell, int y) {
                 // TODO Auto-generated method stub
-                if(!cell.isEmpty() && !cell.isShape() && (20-y) > maxHeight){
-                        maxHeight = 20-y;
+                if (!cell.isEmpty() && !cell.isShape() && (20 - y) > maxHeight) {
+                        maxHeight = 20 - y;
                 }
         }
 
@@ -104,7 +103,7 @@ public class Field {
                 boolean result = true;
                 for (Cell cellBlock : currentShape.getBlocks()) {
                         Cell fieldBlock = getCell(cellBlock.getLocation().x, cellBlock.getLocation().y);
-                        
+
                         if (fieldBlock == null && cellBlock.getLocation().y != -1) {
                                 result = false;
                                 break;
@@ -121,7 +120,6 @@ public class Field {
         public boolean canMoveRight(Shape currentShape) {
                 // TODO Auto-generated method stub
 
-                
                 currentShape.oneRight();
                 boolean result = true;
                 for (Cell cellBlock : currentShape.getBlocks()) {
@@ -206,179 +204,233 @@ public class Field {
 
                 for (Cell c : blocks) {
                         Cell fieldCell = getCell(c.getLocation().x, c.getLocation().y);
-                        
-                        if(fieldCell == null) continue;
-                        
+
+                        if (fieldCell == null)
+                                continue;
+
                         fieldCell.setShape();
-                        
-                        if(20 - fieldCell.getLocation().y > maxHeight)
+
+                        if (20 - fieldCell.getLocation().y > maxHeight)
                                 maxHeight = 20 - fieldCell.getLocation().y;
                 }
 
         }
-        
-        public double evaluateScore() {
+
+        public double evaluateScore(Shape currentShape) {
                 // TODO Auto-generated method stub
-                
-                return -maxHeight;
+                int adjacent = getAdjacentBlockCount(currentShape);
+                int completedRows = getCompletedRows(currentShape);
+                int holes = getHoles(currentShape);
+                return (-maxHeight) + (adjacent * .75) + (completedRows * 3) + (holes * -2);
+                // return adjacent;
         }
+
+        private int getAdjacentBlockCount(Shape currentShape) {
+                // TODO Auto-generated method stub
+                int totalAttached = 0;
+                int[][] orientation = { { 0, 1 }, { 1, 0 }, { -1, 0 }, { 0, -1 } };
+                for (Cell c : currentShape.getBlocks()) {
+                        Point pt = c.getLocation();
+                        for (int[] offset : orientation) {
+                                int x_val = pt.x + offset[0];
+                                int y_val = pt.y + offset[1];
+
+                                Cell xy = getCell(x_val, y_val);
+
+                                // Weight for the wall is half
+                                if (xy == null) {
+                                        totalAttached++;
+                                } else {
+                                        if (!xy.isEmpty()) {
+                                                totalAttached++;
+                                        }
+                                }
+
+                        }
+                }
+
+                return totalAttached;
+        }
+
+        private int getCompletedRows(Shape currentShape) {
+                // TODO Auto-generated method stub
+                int rows = 0;
+                for (Cell c : currentShape.getBlocks()) {
+                        int v = c.getLocation().y;
+                        boolean completeRow = true;
+
+                        if (v < 0)
+                                continue;
+
+                        for (int i = 0; i < grid.length; i++) {
+
+                                if (grid[i][v].isEmpty() || grid[i][v].isShape()) {
+                                        completeRow = false;
+                                        break;
+                                }
+                        }
+
+                        if (completeRow) {
+                                rows++;
+                        }
+
+                }
+                return rows;
+        }
+
+        private int getHoles(Shape currentShape) {
+                // TODO Auto-generated method stub
+                int hole_count = 0;
+
+                for (int i = 0; i < grid.length; i++) {
+                        boolean countHole = false;
+                        for (int j = maxHeight - 1; j < this.height; j++) {
+                                Cell c = grid[i][j];
+                                if (!c.isEmpty() ) {
+                                        countHole = true;
+                                }
+                                if (countHole && c.isEmpty() ) {
+                                        hole_count++;
+                                }
+                        }
+                }
+
+                return hole_count;
+        }
+
 }
 
+// public double evaluateScore(Shape currShape) {
+// Double max_height = getMaxHeight();
+// double average_height = getAverageHeight();
+//
+// double hole_count = getHoles(max_height);
+// double hole_parameter = -20/Math.pow(max_height,2);
+//
+// double complete_rows = getCompletedRows();
+//
+// double number_connected = getConnected();
+//
+// double resultingHeight = max_height - complete_rows;
+//
+// double score = (resultingHeight * -10)// (20-max_height)) // Low doesnt
+// matter too much
+// + (hole_count * hole_parameter)
+// + (complete_rows * 2)
+// + (number_connected * 5)
+// + (average_height * -.5);
+//
+// // VERSION 18 SCORING FUNCTION
+//// double score = (hole_count * hole_parameter) + (resultingHeight * -5);
+//
+//// double score = (complete_rows) + (hole_count * hole_parameter) +
+// (resultingHeight *-5) - max_height;
+// interestingRows.clear();
+// tempVals = new int[this.width][this.height];
+// return score;
+//
+// }
+//
 
-
-//public double evaluateScore(Shape currShape) {
-//        Double max_height = getMaxHeight();
-//         double average_height = getAverageHeight();
 //
-//        double hole_count = getHoles(max_height);
-//        double hole_parameter = -20/Math.pow(max_height,2);
-//        
-//        double complete_rows = getCompletedRows();
-//        
-//        double number_connected = getConnected();
-//        
-//        double resultingHeight = max_height - complete_rows;
-//        
-//        double score =    (resultingHeight      *       -10)// (20-max_height)) // Low doesnt matter too much 
-//                        + (hole_count           *       hole_parameter) 
-//                        + (complete_rows        *       2)
-//                        + (number_connected     *       5)
-//                        + (average_height       *       -.5);
-//        
-//        // VERSION 18 SCORING FUNCTION
-////        double score = (hole_count * hole_parameter) + (resultingHeight * -5);
-//        
-////        double score = (complete_rows) + (hole_count * hole_parameter) + (resultingHeight *-5) - max_height;
-//        interestingRows.clear();
-//        tempVals = new int[this.width][this.height];
-//        return score;
+// private double getCompletedRows() {
+// // TODO Auto-generated method stub
+// double rows = 0;
+// for(Point pt : interestingRows){
+// int v= pt.y;
+// boolean completeRow = true;
+// for(int i = 0; i < grid.length; i++){
 //
-//}
+// if(tempVals[i][v] == 4) continue;
 //
-//private double getConnected() {
-//        // TODO Auto-generated method stub
-//        int[][] orientation = {{0,1},{1,0},{-1,0},{0,-1}};
-//        double totalAttached = 0;
-//        for(Point pt : interestingRows){
-//                for(int[] offset : orientation){
-//                        int x_val = pt.x + offset[0];
-//                        int y_val = pt.y + offset[1];
-//                        
-//                        Cell xy = getCell(x_val, y_val);
-//                        
-//                        if(xy == null){
-//                                totalAttached++;
-//                        }else{
-//                                if(!xy.isEmpty() && !xy.isShape() && tempVals[x_val][y_val] != 4){
-//                                        totalAttached++;
-//                                }
-//                        }
-//                        
-//                }
-//        }
-//        
-//        return totalAttached;
-//}
+// if(grid[i][v].isEmpty() || grid[i][v].isShape() ){
+// completeRow = false;
+// break;
+// }
+// }
 //
-//private double getCompletedRows() {
-//        // TODO Auto-generated method stub
-//        double rows = 0;
-//        for(Point pt : interestingRows){
-//                int v= pt.y;
-//                boolean completeRow = true;
-//                for(int i = 0; i < grid.length; i++){
-//                        
-//                        if(tempVals[i][v] == 4) continue;
-//                        
-//                        if(grid[i][v].isEmpty() || grid[i][v].isShape() ){
-//                                completeRow = false;
-//                                break;
-//                        }
-//                }
-//                
-//                if(completeRow){
-//                        rows++;
-//                }
-//                
-//        }
-//        return rows;
-//}
+// if(completeRow){
+// rows++;
+// }
 //
-//private double getHoles(Double max_height) {
-//        // TODO Auto-generated method stub
-//        double hole_count = 0;
-//        
-//        for (int i = 0; i < grid.length; i++) {
-//                boolean countHole = false;
-//                for (int j = max_height.intValue() - 1; j < this.height; j++) {
-//                        Cell c = grid[i][j];
-//                        if(!c.isEmpty() || tempVals[i][j] == 4){
-//                                countHole = true;
-//                        }
-//                        if (countHole && c.isEmpty() && tempVals[i][j] != 4) {
-//                                hole_count++;
-//                        }
-//                }
-//        }
+// }
+// return rows;
+// }
 //
-//        return hole_count;
-//}
+// private double getHoles(Double max_height) {
+// // TODO Auto-generated method stub
+// double hole_count = 0;
 //
-///*
+// for (int i = 0; i < grid.length; i++) {
+// boolean countHole = false;
+// for (int j = max_height.intValue() - 1; j < this.height; j++) {
+// Cell c = grid[i][j];
+// if(!c.isEmpty() || tempVals[i][j] == 4){
+// countHole = true;
+// }
+// if (countHole && c.isEmpty() && tempVals[i][j] != 4) {
+// hole_count++;
+// }
+// }
+// }
+//
+// return hole_count;
+// }
+//
+/// *
 // * Calculates average height of the stack Highest part of the board is 0
 // * and lowest is 19. (20 height).
 // */
-//public double getAverageHeight() {
-//        // TODO Auto-generated method stub
-//        double heightOfBoard = grid[0].length;
+// public double getAverageHeight() {
+// // TODO Auto-generated method stub
+// double heightOfBoard = grid[0].length;
 //
-//        double total = 0;
+// double total = 0;
 //
-//        for (int i = 0; i < grid.length; i++) {
-//                for (int j = 0; j < grid[0].length; j++) {
-//                        Cell c = grid[i][j];
-//                        if (!c.isEmpty() || tempVals[i][j] == 4) {
+// for (int i = 0; i < grid.length; i++) {
+// for (int j = 0; j < grid[0].length; j++) {
+// Cell c = grid[i][j];
+// if (!c.isEmpty() || tempVals[i][j] == 4) {
 //
-//                                // Continue if it is the shape we are
-//                                // trying to process.
-//                                if (c.isShape() && tempVals[i][j] != 4)
-//                                        continue;
+// // Continue if it is the shape we are
+// // trying to process.
+// if (c.isShape() && tempVals[i][j] != 4)
+// continue;
 //
-//                                double height = heightOfBoard - c.getLocation().getY();
-//                                total+= height;
-//                                break;
-//                        }
-//                }
-//        }
+// double height = heightOfBoard - c.getLocation().getY();
+// total+= height;
+// break;
+// }
+// }
+// }
 //
-//        return total/grid.length;
-//}
+// return total/grid.length;
+// }
 //
-//public double getMaxHeight() {
-//        // TODO Auto-generated method stub
-//        double heightOfBoard = grid[0].length;
+// public double getMaxHeight() {
+// // TODO Auto-generated method stub
+// double heightOfBoard = grid[0].length;
 //
-//        double max_height = 0;
+// double max_height = 0;
 //
-//        for (int i = 0; i < grid.length; i++) {
-//                for (int j = 0; j < grid[0].length; j++) {
-//                        Cell c = grid[i][j];
-//                        if (!c.isEmpty() || tempVals[i][j] == 4) {
+// for (int i = 0; i < grid.length; i++) {
+// for (int j = 0; j < grid[0].length; j++) {
+// Cell c = grid[i][j];
+// if (!c.isEmpty() || tempVals[i][j] == 4) {
 //
-//                                // Continue if it is the shape we are
-//                                // trying to process.
-//                                if (c.isShape() && tempVals[i][j] != 4)
-//                                        continue;
+// // Continue if it is the shape we are
+// // trying to process.
+// if (c.isShape() && tempVals[i][j] != 4)
+// continue;
 //
-//                                double height = heightOfBoard - c.getLocation().getY();
-//                                if (height > max_height) {
-//                                        max_height = height;
-//                                }
-//                                break;
-//                        }
-//                }
-//        }
+// double height = heightOfBoard - c.getLocation().getY();
+// if (height > max_height) {
+// max_height = height;
+// }
+// break;
+// }
+// }
+// }
 //
-//        return max_height;
-//}
-
+// return max_height;
+// }
