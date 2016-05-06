@@ -30,6 +30,14 @@ public class StrategyProcessor {
 
                 Shape tempCurrentShape = currentShape.copyShape(field);
 
+                // Drop until two above.
+                int position = field.getMaxHeight();
+                while(position+2 < 20){
+                        tempCurrentShape.oneDown();
+                        tempResult.addMove(MoveType.DOWN);
+                        position++;
+                }
+                
                 for (int i = 0; i < tempCurrentShape.getRotations(); i++) {
                         if (i != 0) {
                                 tempCurrentShape.turnRight(i);

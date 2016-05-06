@@ -185,6 +185,10 @@ public class Field {
                 return strBldr.toString().substring(0, strBldr.length() - 1);
         }
 
+        public int getMaxHeight(){
+                return maxHeight;
+        }
+        
 //        public void write(String line) {
 //                try {
 //                        FileWriter writer = new FileWriter("starter_out.txt", true);
@@ -226,9 +230,13 @@ public class Field {
                 double resultingHeight = maxHeight - completedRows;
 
                 double hole_parameter = -20 / Math.pow(maxHeight, 2);
+//                double hole_parameter = -7.8;
 
                 return (averageHeight * -.5) + (resultingHeight * -10) + (adjacent * 5) + (completedRows * 2)
                                 + (holes * hole_parameter);
+//              return (averageHeight * -.5) + (resultingHeight * -10) + (adjacent * 5) + (completedRows * 2)
+//              + (holes * -20);
+
                 
 //                return (averageHeight * -.5) + (holes *hole_parameter);
         }
