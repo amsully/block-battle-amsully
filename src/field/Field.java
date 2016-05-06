@@ -185,17 +185,17 @@ public class Field {
                 return strBldr.toString().substring(0, strBldr.length() - 1);
         }
 
-        public void write(String line) {
-                try {
-                        FileWriter writer = new FileWriter("starter_out.txt", true);
-                        writer.write(line);
-                        writer.write("\n");
-                        writer.close();
-                } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                }
-        }
+//        public void write(String line) {
+//                try {
+//                        FileWriter writer = new FileWriter("starter_out.txt", true);
+//                        writer.write(line);
+//                        writer.write("\n");
+//                        writer.close();
+//                } catch (IOException e) {
+//                        // TODO Auto-generated catch block
+//                        e.printStackTrace();
+//                }
+//        }
 
         // Required that we already know this is a valid block.
         public void setBlock(Shape currentShape) {
@@ -229,7 +229,8 @@ public class Field {
 
                 return (averageHeight * -.5) + (resultingHeight * -10) + (adjacent * 5) + (completedRows * 2)
                                 + (holes * hole_parameter);
-
+                
+//                return (averageHeight * -.5) + (holes *hole_parameter);
         }
 
         private int getAdjacentBlockCount(Shape currentShape) {

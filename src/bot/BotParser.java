@@ -37,7 +37,7 @@ public class BotParser {
 	
 	final Scanner scan;
 	
-	final FileWriter writer;
+//	final FileWriter writer;
 	
 	final BotStarter bot;
 	
@@ -49,14 +49,14 @@ public class BotParser {
 		this.bot = bot;
 		this.currentState = new BotState();
 		
-		FileWriter tmp = null;
-		try {
-                        tmp = new FileWriter("bot.txt");
-                } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                }
-		writer = tmp;
+//		FileWriter tmp = null;
+//		try {
+//                        tmp = new FileWriter("bot.txt");
+//                } catch (IOException e) {
+//                        // TODO Auto-generated catch block
+//                        e.printStackTrace();
+//                }
+//		writer = tmp;
 	}
 	
 	public void run()
@@ -68,7 +68,7 @@ public class BotParser {
 			/*
 			 * DEBUG
 			 */
-			write(line);
+//			write(line);
 			
 			if(line.length() == 0) { continue; }
 			String[] parts = line.split(" ");
@@ -102,14 +102,14 @@ public class BotParser {
 		}
 	}
 	
-	public void write(String line){
-	        try {
-                        writer.write(line);
-                        writer.write("\n");
-                } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                }
-	}
+//	public void write(String line){
+//	        try {
+//                        writer.write(line);
+//                        writer.write("\n");
+//                } catch (IOException e) {
+//                        // TODO Auto-generated catch block
+//                        e.printStackTrace();
+//                }
+//	}
 
 }

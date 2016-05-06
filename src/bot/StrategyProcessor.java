@@ -23,12 +23,10 @@ public class StrategyProcessor {
         }
 
         public void run() {
-                // TODO Auto-generated method stub
                 searchSpace();
         }
 
         private void searchSpace() {
-                // TODO Auto-generated method stub
 
                 Shape tempCurrentShape = currentShape.copyShape(field);
 
@@ -52,24 +50,12 @@ public class StrategyProcessor {
 
                         exploreRight(tempCurrentShape);
 
-//                        for (int j = 0; j < moveLeftCount - 1; j++) {
-//                                tempCurrentShape.oneRight();
-//                                tempResult.removeLastMove();
-//                        }
-                        while(tempResult.lastMove() == MoveType.LEFT){
+                        while (tempResult.lastMove() == MoveType.LEFT) {
                                 tempCurrentShape.oneRight();
                                 tempResult.removeLastMove();
                         }
-                        
-                        // Turn the shape back and remove moves.
-//                        if (i != 0) {
-//                                tempCurrentShape.turnLeft(i);
-//
-//                                for (int j = 0; j < i; j++) {
-//                                        tempResult.removeLastMove();
-//                                }
-//                        }
-                        while(tempResult.lastMove() == MoveType.TURNRIGHT){
+
+                        while (tempResult.lastMove() == MoveType.TURNRIGHT) {
                                 tempCurrentShape.turnLeft();
                                 tempResult.removeLastMove();
                         }
@@ -78,9 +64,8 @@ public class StrategyProcessor {
         }
 
         private void exploreRight(Shape currentShape) {
-                // TODO Auto-generated method stub
-                int moveRightCount = 0;
 
+                int moveRightCount = 0;
                 while (field.canMoveRight(currentShape)) {
                         if (currentShape.isOutOfBoundaries(field)) {
                                 continue;
@@ -92,26 +77,59 @@ public class StrategyProcessor {
                                 } else {
                                         tempResult.addMove(MoveType.RIGHT);
                                 }
-//                                tempResult.addMove(MoveType.RIGHT);
                                 currentShape.oneRight();
                         }
 
                         // Move all the way down.
-                        int numberDown = 0;
                         while (field.canMoveDown(currentShape)) {
                                 tempResult.addMove(MoveType.DOWN);
                                 currentShape.oneDown();
-                                numberDown++;
                         }
+
                         
                         evaluateFinalPosition(currentShape);
-                        // Return shape back to top.
-//                        for (int i = 0; i < numberDown; i++) {
-//                                currentShape.oneUp();
+
+                        /*
+                         * CHECKING FOR FINAL 'Scooting' of the piece under others.
+                         */
+                        // CHECKING RIGHT
+                        while(field.canMoveLeft(currentShape)){
+                                tempResult.addMove(MoveType.LEFT);
+                                currentShape.oneLeft();
+                        }
+                        evaluateFinalPosition(currentShape);
+                        while(tempResult.lastMove() == MoveType.LEFT){
+                                tempResult.removeLastMove();
+                                currentShape.oneRight();
+                        }
+                        
+                        // CHECKING LEFT
+                        while(field.canMoveLeft(currentShape)){
+                                tempResult.addMove(MoveType.LEFT);
+                                currentShape.oneLeft();
+                        }
+                        evaluateFinalPosition(currentShape);
+                        while(tempResult.lastMove() == MoveType.LEFT){
+                                tempResult.removeLastMove();
+                                currentShape.oneRight();
+                        }
+
+                        while (tempResult.lastMove() == MoveType.DOWN) {
+                                currentShape.oneUp();
+                                tempResult.removeLastMove();
+                        }
+                        // CHECK ROTATIONS
+//                        for(int i = 0; i < currentShape.getRotations(); i++){
+//                                currentShape.turnRight();
+//                                tempResult.addMove(MoveType.TURNRIGHT);
+//                        }
+//                        evaluateFinalPosition(currentShape);
+//                        while(tempResult.lastMove() == MoveType.TURNRIGHT){
+//                                currentShape.turnLeft();
 //                                tempResult.removeLastMove();
 //                        }
                         
-                        while(tempResult.lastMove() == MoveType.DOWN){
+                        while (tempResult.lastMove() == MoveType.DOWN) {
                                 currentShape.oneUp();
                                 tempResult.removeLastMove();
                         }
@@ -119,12 +137,7 @@ public class StrategyProcessor {
                         moveRightCount++;
                 }
 
-                // Remove all previous right moves.
-//                for (int i = 0; i < moveRightCount - 1; i++) {
-//                        currentShape.oneLeft();
-//                        tempResult.removeLastMove();
-//                }
-                while(tempResult.lastMove() == MoveType.RIGHT){
+                while (tempResult.lastMove() == MoveType.RIGHT) {
                         currentShape.oneLeft();
                         tempResult.removeLastMove();
                 }
@@ -146,7 +159,7 @@ public class StrategyProcessor {
                         // tempField.removeCompletedLines();
                         StrategyProcessor lookaheadProcessor = new StrategyProcessor(nextShape, null, tempField);
                         lookaheadProcessor.run();
-                        tempResult.score += .5 * lookaheadProcessor.getBest().score;
+                        tempResult.score += .6 * lookaheadProcessor.getBest().score;
                 }
 
                 if (tempResult.getScore() > best.getScore()) {
@@ -159,15 +172,15 @@ public class StrategyProcessor {
                 return best;
         }
 
-        public void write(String line) {
-                try {
-                        FileWriter writer = new FileWriter("starter_out.txt", true);
-                        writer.write(line);
-                        writer.write("\n");
-                        writer.close();
-                } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                }
-        }
+//        public void write(String line) {
+//                try {
+//                        FileWriter writer = new FileWriter("starter_out.txt", true);
+//                        writer.write(line);
+//                        writer.write("\n");
+//                        writer.close();
+//                } catch (IOException e) {
+//                        // TODO Auto-generated catch block
+//                        e.printStackTrace();
+//                }
+//        }
 }
