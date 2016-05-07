@@ -85,7 +85,7 @@ public class BotStarter {
                 
                 bestResult.moves.add(MoveType.DOWN);
                 
-//                write("ROUND " + state.getRound() + ": " +  bestResult.moves.toString());
+                write("ROUND " + state.getRound() + ": " +  bestResult.moves.toString());
                 return bestResult.moves;
         }
 
@@ -95,17 +95,17 @@ public class BotStarter {
                 parser.run();
         }
 
-//        public void write(String line) {
-//                try {
-//                        FileWriter writer = new FileWriter("starter_out.txt", true);
-//                        writer.write(line);
-//                        writer.write("\n");
-//                        writer.close();
-//                } catch (IOException e) {
-//                        // TODO Auto-generated catch block
-//                        e.printStackTrace();
-//                }
-//        }
+        public void write(String line) {
+                try {
+                        FileWriter writer = new FileWriter("starter_out.txt", true);
+                        writer.write(line);
+                        writer.write("\n");
+                        writer.close();
+                } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                }
+        }
 
 
 }

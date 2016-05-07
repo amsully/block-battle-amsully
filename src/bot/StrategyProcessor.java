@@ -33,7 +33,7 @@ public class StrategyProcessor {
 
                 // Drop until two above.
                 int position = field.getMaxHeight();
-                while(position+2 < 20){
+                while(position+3 < 20){
                         tempCurrentShape.oneDown();
                         tempResult.addMove(MoveType.DOWN);
                         position++;

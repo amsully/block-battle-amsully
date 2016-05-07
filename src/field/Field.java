@@ -193,17 +193,7 @@ public class Field {
                 return maxHeight;
         }
 
-        public void write(String line) {
-                try {
-                        FileWriter writer = new FileWriter("starter_out.txt", true);
-                        writer.write(line);
-                        writer.write("\n");
-                        writer.close();
-                } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                }
-        }
+
 
         // Required that we already know this is a valid block.
         public void setBlock(Shape currentShape) {
@@ -226,35 +216,30 @@ public class Field {
 
         public double evaluateScore(Shape currentShape) {
                 // TODO Auto-generated method stub
-                 double adjacent = getAdjacentBlockCount(currentShape);
+                // double adjacent = getAdjacentBlockCount(currentShape);
                 double completedRows = getCompletedRows(currentShape);
                 double holes = getHoles(currentShape);
                 double aggregateHeight = getAggregateHeight_SetBump();
 
-                double          a=-0.51006,
-                                b=0.760666,
-                                c=-0.35663,
-                                d=-0.184483;
-                
-                write(aggregateHeight * -1+"");
-                return aggregateHeight*-1;
-//                double score =  (a * aggregateHeight)+
-//                                (b* completedRows) + 
-//                                (c * holes) + 
-//                                (d * bumpiness);
+                double a = -0.51006, b = 0.760666, c = -0.35663, d = -0.184483;
 
-//                return score;
+//                return aggregateHeight * -1;
+                 double score = (a * aggregateHeight)+
+                 (b* completedRows) +
+                 (c * holes) +
+                 (d * bumpiness);
                 
-                
-//                 double averageHeight = getAverageHeight();
-//                 double resultingHeight = maxHeight - completedRows;
-//
-//                 double hole_parameter = -20 / Math.pow(maxHeight, 2);
-////                 double hole_parameter = -7.8;
-//
-//                 return (averageHeight * -.5) + (resultingHeight * -10) +
-//                 (adjacent * 5) + (completedRows * 2)
-//                 + (holes * hole_parameter);
+                 return score;
+
+                // double averageHeight = getAverageHeight();
+                // double resultingHeight = maxHeight - completedRows;
+                //
+                // double hole_parameter = -20 / Math.pow(maxHeight, 2);
+                //// double hole_parameter = -7.8;
+                //
+                // return (averageHeight * -.5) + (resultingHeight * -10) +
+                // (adjacent * 5) + (completedRows * 2)
+                // + (holes * hole_parameter);
                 // return (averageHeight * -.5) + (resultingHeight * -10) +
                 // (adjacent * 5) + (completedRows * 2)
                 // + (holes * -20);
@@ -263,19 +248,17 @@ public class Field {
         }
 
         private double getAggregateHeight_SetBump() {
-                double heightOfBoard = grid[0].length;
-
                 double total = 0;
 
                 ArrayList<Double> heights = new ArrayList<Double>();
 
-                for (int i = 0; i < grid.length; i++) {
-                        for (int j = 0; j < grid[0].length; j++) {
-                                Cell c = grid[i][j];
-                                if (!c.isEmpty() ) {
-                                        double height = heightOfBoard - c.getLocation().getY();
+                for (int i = 0; i < this.width; i++) {
+                        for (int j = 0; j < this.height; j++) {
+                                Cell c = this.getCell(i, j); // grid[i][j];
+                                if (!c.isEmpty()) {
+                                        double height = this.height - c.getLocation().getY();
                                         total += height;
-                                        write("HT: " + height);
+
                                         heights.add(height);
                                         break;
                                 }
@@ -293,6 +276,7 @@ public class Field {
                 }
                 bumpiness = temp;
 
+//                write(total + "");
                 return total;
         }
 
@@ -355,17 +339,18 @@ public class Field {
 
                 for (int i = 0; i < grid.length; i++) {
                         boolean countHole = false;
-                        for (int j = maxHeight - 1; j < this.height; j++) {
+                        // TODO : OPTIMIZE SO WE DOnT ITERATE OVER EVERYTHING
+                        for (int j = 0; j < this.height; j++) {
+
                                 Cell c = grid[i][j];
                                 if (!c.isEmpty()) {
                                         countHole = true;
-                                }
-                                if (countHole && c.isEmpty()) {
+                                } else if (countHole) {
                                         hole_count++;
                                 }
+
                         }
                 }
-
                 return hole_count;
         }
 
@@ -390,16 +375,31 @@ public class Field {
 
         public void erradicateShape(Shape currentShape) {
                 // TODO Auto-generated method stub
-                for(Cell c : currentShape.getBlocks()){
-                        
+                for (Cell c : currentShape.getBlocks()) {
+
                         Cell fieldCell = getCell(c.getLocation().x, c.getLocation().y);
-                        
-                        if(fieldCell == null) continue;
-                        
-                        fieldCell.setEmpty();// = new Cell(c.getLocation().x, c.getLocation().y, CellType.EMPTY);
-                        
+
+                        if (fieldCell == null)
+                                continue;
+
+                        fieldCell.setEmpty();// = new Cell(c.getLocation().x,
+                                             // c.getLocation().y,
+                                             // CellType.EMPTY);
+
                 }
         }
+        
+      public void write(String line) {
+      try {
+              FileWriter writer = new FileWriter("starter_out.txt", true);
+              writer.write(line);
+              writer.write("\n");
+              writer.close();
+      } catch (IOException e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+      }
+}
 }
 
 // public double evaluateScore(Shape currShape) {
