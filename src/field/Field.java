@@ -216,30 +216,31 @@ public class Field {
 
         public double evaluateScore(Shape currentShape) {
                 // TODO Auto-generated method stub
-                // double adjacent = getAdjacentBlockCount(currentShape);
+                 double adjacent = getAdjacentBlockCount(currentShape);
                 double completedRows = getCompletedRows(currentShape);
                 double holes = getHoles(currentShape);
                 double aggregateHeight = getAggregateHeight_SetBump();
+                 double averageHeight = getAverageHeight();
 
                 double a = -0.51006, b = 0.760666, c = -0.35663, d = -0.184483;
 
 //                return aggregateHeight * -1;
-                 double score = (a * aggregateHeight)+
-                 (b* completedRows) +
-                 (c * holes) +
-                 (d * bumpiness);
-                
-                 return score;
+//                 double score = (a * aggregateHeight)+
+//                 (b* completedRows) +
+//                 (c * holes) +
+//                 (d * bumpiness)+ (-.7*averageHeight);
+//                
+//                 return score;
 
-                // double averageHeight = getAverageHeight();
-                // double resultingHeight = maxHeight - completedRows;
-                //
-                // double hole_parameter = -20 / Math.pow(maxHeight, 2);
-                //// double hole_parameter = -7.8;
-                //
-                // return (averageHeight * -.5) + (resultingHeight * -10) +
-                // (adjacent * 5) + (completedRows * 2)
-                // + (holes * hole_parameter);
+//                 double averageHeight = getAverageHeight();
+                 double resultingHeight = maxHeight - completedRows;
+                
+                 double hole_parameter = -20 / Math.pow(maxHeight, 2);
+                // double hole_parameter = -7.8;
+                
+                 return (averageHeight * -.5) + (resultingHeight * -10) +
+                 (adjacent * 5) + (completedRows * 2)
+                 + (holes * hole_parameter);
                 // return (averageHeight * -.5) + (resultingHeight * -10) +
                 // (adjacent * 5) + (completedRows * 2)
                 // + (holes * -20);

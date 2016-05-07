@@ -102,25 +102,28 @@ public class StrategyProcessor {
                          * CHECKING FOR FINAL 'Scooting' of the piece under others.
                          */
                         // CHECKING RIGHT
-//                        while(field.canMoveLeft(currentShape)){
-//                                tempResult.addMove(MoveType.LEFT);
-//                                currentShape.oneLeft();
-//                        }
-//                        evaluateFinalPosition(currentShape);
-//                        while(tempResult.lastMove() == MoveType.LEFT){
-//                                tempResult.removeLastMove();
-//                                currentShape.oneRight();
+                        if(field.canMoveRight(currentShape)){
+                                tempResult.addMove(MoveType.RIGHT);
+                                currentShape.oneRight();
+                                
+                                evaluateFinalPosition(currentShape);
+                                tempResult.removeLastMove();
+                                currentShape.oneLeft();
+
+                        }
+//                        if(tempResult.lastMove() == MoveType.RIGHT){
 //                        }
 //                        
-//                        // CHECKING LEFT
-//                        while(field.canMoveLeft(currentShape)){
-//                                tempResult.addMove(MoveType.LEFT);
-//                                currentShape.oneLeft();
-//                        }
-//                        evaluateFinalPosition(currentShape);
-//                        while(tempResult.lastMove() == MoveType.LEFT){
-//                                tempResult.removeLastMove();
-//                                currentShape.oneRight();
+                        // CHECKING LEFT
+                        if(field.canMoveLeft(currentShape)){
+                                tempResult.addMove(MoveType.LEFT);
+                                currentShape.oneLeft();
+                                evaluateFinalPosition(currentShape);
+                                tempResult.removeLastMove();
+                                currentShape.oneRight();
+                        }
+//                        if(tempResult.lastMove() == MoveType.LEFT){
+//
 //                        }
 //
 //                        while (tempResult.lastMove() == MoveType.DOWN) {
