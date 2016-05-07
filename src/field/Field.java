@@ -42,10 +42,14 @@ public class Field {
         private Cell grid[][];
         private int maxHeight;
 
+        // Score values
+        int bumpiness;
+
         public Field(int width, int height, String fieldString) {
                 this.width = width;
                 this.height = height;
                 this.maxHeight = 0; // Initial height.
+                this.bumpiness = 0;
                 parse(fieldString);
         }
 
@@ -185,21 +189,21 @@ public class Field {
                 return strBldr.toString().substring(0, strBldr.length() - 1);
         }
 
-        public int getMaxHeight(){
+        public int getMaxHeight() {
                 return maxHeight;
         }
-        
-//        public void write(String line) {
-//                try {
-//                        FileWriter writer = new FileWriter("starter_out.txt", true);
-//                        writer.write(line);
-//                        writer.write("\n");
-//                        writer.close();
-//                } catch (IOException e) {
-//                        // TODO Auto-generated catch block
-//                        e.printStackTrace();
-//                }
-//        }
+
+        public void write(String line) {
+                try {
+                        FileWriter writer = new FileWriter("starter_out.txt", true);
+                        writer.write(line);
+                        writer.write("\n");
+                        writer.close();
+                } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                }
+        }
 
         // Required that we already know this is a valid block.
         public void setBlock(Shape currentShape) {
@@ -222,23 +226,74 @@ public class Field {
 
         public double evaluateScore(Shape currentShape) {
                 // TODO Auto-generated method stub
-                double adjacent = getAdjacentBlockCount(currentShape);
+                 double adjacent = getAdjacentBlockCount(currentShape);
                 double completedRows = getCompletedRows(currentShape);
                 double holes = getHoles(currentShape);
+                double aggregateHeight = getAggregateHeight_SetBump();
 
-                double averageHeight = getAverageHeight();
-                double resultingHeight = maxHeight - completedRows;
-
-                double hole_parameter = -20 / Math.pow(maxHeight, 2);
-//                double hole_parameter = -7.8;
-
-                return (averageHeight * -.5) + (resultingHeight * -10) + (adjacent * 5) + (completedRows * 2)
-                                + (holes * hole_parameter);
-//              return (averageHeight * -.5) + (resultingHeight * -10) + (adjacent * 5) + (completedRows * 2)
-//              + (holes * -20);
-
+                double          a=-0.51006,
+                                b=0.760666,
+                                c=-0.35663,
+                                d=-0.184483;
                 
-//                return (averageHeight * -.5) + (holes *hole_parameter);
+                write(aggregateHeight * -1+"");
+                return aggregateHeight*-1;
+//                double score =  (a * aggregateHeight)+
+//                                (b* completedRows) + 
+//                                (c * holes) + 
+//                                (d * bumpiness);
+
+//                return score;
+                
+                
+//                 double averageHeight = getAverageHeight();
+//                 double resultingHeight = maxHeight - completedRows;
+//
+//                 double hole_parameter = -20 / Math.pow(maxHeight, 2);
+////                 double hole_parameter = -7.8;
+//
+//                 return (averageHeight * -.5) + (resultingHeight * -10) +
+//                 (adjacent * 5) + (completedRows * 2)
+//                 + (holes * hole_parameter);
+                // return (averageHeight * -.5) + (resultingHeight * -10) +
+                // (adjacent * 5) + (completedRows * 2)
+                // + (holes * -20);
+
+                // return (averageHeight * -.5) + (holes *hole_parameter);
+        }
+
+        private double getAggregateHeight_SetBump() {
+                double heightOfBoard = grid[0].length;
+
+                double total = 0;
+
+                ArrayList<Double> heights = new ArrayList<Double>();
+
+                for (int i = 0; i < grid.length; i++) {
+                        for (int j = 0; j < grid[0].length; j++) {
+                                Cell c = grid[i][j];
+                                if (!c.isEmpty() ) {
+                                        double height = heightOfBoard - c.getLocation().getY();
+                                        total += height;
+                                        write("HT: " + height);
+                                        heights.add(height);
+                                        break;
+                                }
+                        }
+                }
+
+                int temp = 0;
+                double prev = heights.get(0);
+                for (int i = 1; i < heights.size(); i++) {
+                        double curr = heights.get(i);
+
+                        temp += Math.abs(curr - prev);
+
+                        prev = curr;
+                }
+                bumpiness = temp;
+
+                return total;
         }
 
         private int getAdjacentBlockCount(Shape currentShape) {
@@ -331,6 +386,19 @@ public class Field {
                         }
                 }
                 return total / grid.length;
+        }
+
+        public void erradicateShape(Shape currentShape) {
+                // TODO Auto-generated method stub
+                for(Cell c : currentShape.getBlocks()){
+                        
+                        Cell fieldCell = getCell(c.getLocation().x, c.getLocation().y);
+                        
+                        if(fieldCell == null) continue;
+                        
+                        fieldCell.setEmpty();// = new Cell(c.getLocation().x, c.getLocation().y, CellType.EMPTY);
+                        
+                }
         }
 }
 

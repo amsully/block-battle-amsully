@@ -62,6 +62,11 @@ public class Cell {
 		this.state = CellType.SHAPE;
 	}
 	
+        public void setEmpty() {
+                // TODO Auto-generated method stub
+                this.state = CellType.EMPTY;
+        }
+	
 	public void setLocation(int x, int y) {
 		if(this.location == null)
 			this.location = new Point();

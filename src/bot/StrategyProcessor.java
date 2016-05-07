@@ -28,6 +28,7 @@ public class StrategyProcessor {
 
         private void searchSpace() {
 
+                field.erradicateShape(currentShape);
                 Shape tempCurrentShape = currentShape.copyShape(field);
 
                 // Drop until two above.
@@ -101,31 +102,31 @@ public class StrategyProcessor {
                          * CHECKING FOR FINAL 'Scooting' of the piece under others.
                          */
                         // CHECKING RIGHT
-                        while(field.canMoveLeft(currentShape)){
-                                tempResult.addMove(MoveType.LEFT);
-                                currentShape.oneLeft();
-                        }
-                        evaluateFinalPosition(currentShape);
-                        while(tempResult.lastMove() == MoveType.LEFT){
-                                tempResult.removeLastMove();
-                                currentShape.oneRight();
-                        }
-                        
-                        // CHECKING LEFT
-                        while(field.canMoveLeft(currentShape)){
-                                tempResult.addMove(MoveType.LEFT);
-                                currentShape.oneLeft();
-                        }
-                        evaluateFinalPosition(currentShape);
-                        while(tempResult.lastMove() == MoveType.LEFT){
-                                tempResult.removeLastMove();
-                                currentShape.oneRight();
-                        }
-
-                        while (tempResult.lastMove() == MoveType.DOWN) {
-                                currentShape.oneUp();
-                                tempResult.removeLastMove();
-                        }
+//                        while(field.canMoveLeft(currentShape)){
+//                                tempResult.addMove(MoveType.LEFT);
+//                                currentShape.oneLeft();
+//                        }
+//                        evaluateFinalPosition(currentShape);
+//                        while(tempResult.lastMove() == MoveType.LEFT){
+//                                tempResult.removeLastMove();
+//                                currentShape.oneRight();
+//                        }
+//                        
+//                        // CHECKING LEFT
+//                        while(field.canMoveLeft(currentShape)){
+//                                tempResult.addMove(MoveType.LEFT);
+//                                currentShape.oneLeft();
+//                        }
+//                        evaluateFinalPosition(currentShape);
+//                        while(tempResult.lastMove() == MoveType.LEFT){
+//                                tempResult.removeLastMove();
+//                                currentShape.oneRight();
+//                        }
+//
+//                        while (tempResult.lastMove() == MoveType.DOWN) {
+//                                currentShape.oneUp();
+//                                tempResult.removeLastMove();
+//                        }
                         // CHECK ROTATIONS
 //                        for(int i = 0; i < currentShape.getRotations(); i++){
 //                                currentShape.turnRight();
@@ -180,15 +181,15 @@ public class StrategyProcessor {
                 return best;
         }
 
-//        public void write(String line) {
-//                try {
-//                        FileWriter writer = new FileWriter("starter_out.txt", true);
-//                        writer.write(line);
-//                        writer.write("\n");
-//                        writer.close();
-//                } catch (IOException e) {
-//                        // TODO Auto-generated catch block
-//                        e.printStackTrace();
-//                }
-//        }
+        public void write(String line) {
+                try {
+                        FileWriter writer = new FileWriter("starter_out.txt", true);
+                        writer.write(line);
+                        writer.write("\n");
+                        writer.close();
+                } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                }
+        }
 }
