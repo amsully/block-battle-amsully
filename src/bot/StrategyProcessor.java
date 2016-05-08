@@ -168,10 +168,10 @@ public class StrategyProcessor {
                  * ONE LOOKAHEAD
                  */
                 if (nextShape != null) {
-                        // tempField.removeCompletedLines();
+                         tempField.removeCompletedLines();
                         StrategyProcessor lookaheadProcessor = new StrategyProcessor(nextShape, null, tempField);
                         lookaheadProcessor.run();
-                        tempResult.score += .6 * lookaheadProcessor.getBest().score;
+                        tempResult.score +=  lookaheadProcessor.getBest().score;
                 }
 
                 if (tempResult.getScore() > best.getScore()) {
@@ -184,15 +184,15 @@ public class StrategyProcessor {
                 return best;
         }
 
-        public void write(String line) {
-                try {
-                        FileWriter writer = new FileWriter("starter_out.txt", true);
-                        writer.write(line);
-                        writer.write("\n");
-                        writer.close();
-                } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                }
-        }
+//        public void write(String line) {
+//                try {
+//                        FileWriter writer = new FileWriter("starter_out.txt", true);
+//                        writer.write(line);
+//                        writer.write("\n");
+//                        writer.close();
+//                } catch (IOException e) {
+//                        // TODO Auto-generated catch block
+//                        e.printStackTrace();
+//                }
+//        }
 }
