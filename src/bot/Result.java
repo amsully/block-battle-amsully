@@ -9,9 +9,18 @@ public class Result {
         ArrayList<MoveType> moves;
         double score;
 
+        int rotationsRight;
+        int left; 
+        int right;
+        int floor_right;
+        int floor_left;
+        int floor_rotationsRight;
+        int floor_rotationsLeft;
+        
         public Result() {
                 moves = new ArrayList<MoveType>();
                 score = -Double.MAX_VALUE;
+
         }
 
         public void setMoves(ArrayList<MoveType> moves) {

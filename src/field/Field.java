@@ -216,40 +216,50 @@ public class Field {
 
         public double evaluateScore(Shape currentShape, int combo, double parameters[]) {
 
-                double adjacent = getAdjacentBlockCount(currentShape);
+//                double adjacent = getAdjacentBlockCount(currentShape);
                 double completedRows = getCompletedRows(currentShape);
                 double holes = getHoles(currentShape);
-                double aggregateHeight = getAggregateHeight_SetBump();
-                double averageHeight = getAverageHeight();
+//                double aggregateHeight = getAggregateHeight_SetBump();
+//                double averageHeight = getAverageHeight();
 
-                double a = -0.51006, b = 0.760666, c = -0.35663, d = -0.184483;
-                // double score = (a * aggregateHeight) + (b * completedRows) +
-                // (c * holes) + (d * bumpiness)
-                // + (.3 * adjacent) + (-.1*maxHeight);
-                double score = (parameters[0] * aggregateHeight) + (parameters[1] * completedRows)
-                                + (parameters[2] * holes) + (parameters[3] * bumpiness) + (parameters[4] * adjacent)
-                                + (parameters[5] * maxHeight);
+//                double a = -0.51006, b = 0.760666, c = -0.35663, d = -0.184483;
 
-                return score;
+////                 double score = (a * aggregateHeight) + (b * completedRows) +
+////                 (c * holes) + (d * bumpiness)
+////                 + (.3 * adjacent) + (-.1*maxHeight);
+////                parameters[0] = -0.15846462326122746;
+////                parameters[1] = 0.3044248703986045;
+////                parameters[2] = 0.08060434639738116;
+////                parameters[3] = -0.08577848168303195;
+////                parameters[4] = 0.20942787648242758;
+////                parameters[5] = -0.16435282856357042;
+//                
+//                double score = (parameters[0] * aggregateHeight) + (parameters[1] * completedRows)
+//                                + (parameters[2] * holes) + (parameters[3] * bumpiness) + (parameters[4] * adjacent)
+//                                + (parameters[5] * maxHeight);
+//
+//                return score;
 
                 // double averageHeight = getAverageHeight();
-                // double resultingHeight = maxHeight - completedRows;
-                // double hole_parameter = -20 / Math.pow(maxHeight, 2);
-                // return (averageHeight * -.5) + (resultingHeight * -10) +
-                // (adjacent * 5) + (completedRows * 2)
-                // + (holes * hole_parameter);
+//                 double resultingHeight = maxHeight - completedRows;
+//                 double hole_parameter = -20 / Math.pow(maxHeight, 2);
+//                 double hole_parameter = -35 / Math.pow(maxHeight, 2);
+//
+//                 return (averageHeight * -.5) + (resultingHeight * -10) +
+//                 (adjacent * 5) + (completedRows * 2 )
+//                 + (holes * hole_parameter);
 
-                // return (averageHeight * -.5) + (resultingHeight * -10) +
-                // (adjacent * 5) + (completedRows * 2)
-                // + (holes * -20);
-
+//                 return (averageHeight * -.5) + (resultingHeight * -10) +
+//                 (adjacent * 5) + (completedRows * combo)
+//                 + (holes * -20);
+                 
                 // return (averageHeight * -.5) + (holes *hole_parameter);
                 // if(combo == 0){
                 // combo = 1;
                 // }
-                // return (this.getHeight() - currentShape.getLocation().getY()
-                // - currentShape.getSize() * -5)+
-                // (completedRows * combo * 3) + (holes * -10);
+                 return (this.getHeight() - currentShape.getLocation().getY()
+                 - currentShape.getSize()) * -5+
+                 (completedRows * combo * 3) + (holes * -10);
         }
 
         private double getAggregateHeight_SetBump() {
@@ -322,7 +332,7 @@ public class Field {
                         if (v < 0)
                                 continue;
 
-                        for (int i = 0; i < grid.length; i++) {
+                        for (int i = 0; i < this.getWidth(); i++) {
 
                                 if (grid[i][v].isEmpty() || grid[i][v].isSolid()) {// ||
                                                                                    // grid[i][v].isShape())
@@ -344,15 +354,14 @@ public class Field {
                 // TODO Auto-generated method stub
                 int hole_count = 0;
 
-                for (int i = 0; i < grid.length; i++) {
+                for (int i = 0; i < this.width; i++) {
                         boolean countHole = false;
                         // TODO : OPTIMIZE SO WE DOnT ITERATE OVER EVERYTHING
                         for (int j = 0; j < this.height; j++) {
 
-                                Cell c = grid[i][j];
-                                if (!c.isEmpty()) {
+                                if (grid[i][j].isBlock()) {
                                         countHole = true;
-                                } else if (countHole) {
+                                } else if (countHole && grid[i][j].isEmpty()) {
                                         hole_count++;
                                 }
 
@@ -408,143 +417,30 @@ public class Field {
 //                }
 //        }
 
-        public void removeCompletedLines() {
+        public int removeCompletedLines() {
                 // TODO Auto-generated method stub
-
+                int total = 0;
+                
+                for(int row = 0; row < this.height; row++){
+                        for(int col = 0; col < this.width; col ++){
+                                if(!this.grid[col][row].isBlock()){
+                                        break;
+                                }
+                                if(col == this.width-1){
+                                        total++;
+                                        Cell bringDown;
+                                        for(int i = 0; i < this.width; i++){
+                                                this.grid[i][row].setEmpty();
+                                                for(int j = row-1; j >= 0; j--){
+                                                        bringDown = this.grid[i][j+1];
+                                                        this.grid[i][j+1] = this.grid[i][j];
+                                                        this.grid[i][j] = bringDown;
+                                                }
+                                        }
+                                }
+                        }
+                }
+                
+                return total;
         }
 }
-
-// public double evaluateScore(Shape currShape) {
-// Double max_height = getMaxHeight();
-// double average_height = getAverageHeight();
-//
-// double hole_count = getHoles(max_height);
-// double hole_parameter = -20/Math.pow(max_height,2);
-//
-// double complete_rows = getCompletedRows();
-//
-// double number_connected = getConnected();
-//
-// double resultingHeight = max_height - complete_rows;
-//
-// double score = (resultingHeight * -10)// (20-max_height)) // Low doesnt
-// matter too much
-// + (hole_count * hole_parameter)
-// + (complete_rows * 2)
-// + (number_connected * 5)
-// + (average_height * -.5);
-//
-// // VERSION 18 SCORING FUNCTION
-//// double score = (hole_count * hole_parameter) + (resultingHeight * -5);
-//
-//// double score = (complete_rows) + (hole_count * hole_parameter) +
-// (resultingHeight *-5) - max_height;
-// interestingRows.clear();
-// tempVals = new int[this.width][this.height];
-// return score;
-//
-// }
-//
-
-//
-// private double getCompletedRows() {
-// // TODO Auto-generated method stub
-// double rows = 0;
-// for(Point pt : interestingRows){
-// int v= pt.y;
-// boolean completeRow = true;
-// for(int i = 0; i < grid.length; i++){
-//
-// if(tempVals[i][v] == 4) continue;
-//
-// if(grid[i][v].isEmpty() || grid[i][v].isShape() ){
-// completeRow = false;
-// break;
-// }
-// }
-//
-// if(completeRow){
-// rows++;
-// }
-//
-// }
-// return rows;
-// }
-//
-// private double getHoles(Double max_height) {
-// // TODO Auto-generated method stub
-// double hole_count = 0;
-//
-// for (int i = 0; i < grid.length; i++) {
-// boolean countHole = false;
-// for (int j = max_height.intValue() - 1; j < this.height; j++) {
-// Cell c = grid[i][j];
-// if(!c.isEmpty() || tempVals[i][j] == 4){
-// countHole = true;
-// }
-// if (countHole && c.isEmpty() && tempVals[i][j] != 4) {
-// hole_count++;
-// }
-// }
-// }
-//
-// return hole_count;
-// }
-//
-/// *
-// * Calculates average height of the stack Highest part of the board is 0
-// * and lowest is 19. (20 height).
-// */
-// public double getAverageHeight() {
-// // TODO Auto-generated method stub
-// double heightOfBoard = grid[0].length;
-//
-// double total = 0;
-//
-// for (int i = 0; i < grid.length; i++) {
-// for (int j = 0; j < grid[0].length; j++) {
-// Cell c = grid[i][j];
-// if (!c.isEmpty() || tempVals[i][j] == 4) {
-//
-// // Continue if it is the shape we are
-// // trying to process.
-// if (c.isShape() && tempVals[i][j] != 4)
-// continue;
-//
-// double height = heightOfBoard - c.getLocation().getY();
-// total+= height;
-// break;
-// }
-// }
-// }
-//
-// return total/grid.length;
-// }
-//
-// public double getMaxHeight() {
-// // TODO Auto-generated method stub
-// double heightOfBoard = grid[0].length;
-//
-// double max_height = 0;
-//
-// for (int i = 0; i < grid.length; i++) {
-// for (int j = 0; j < grid[0].length; j++) {
-// Cell c = grid[i][j];
-// if (!c.isEmpty() || tempVals[i][j] == 4) {
-//
-// // Continue if it is the shape we are
-// // trying to process.
-// if (c.isShape() && tempVals[i][j] != 4)
-// continue;
-//
-// double height = heightOfBoard - c.getLocation().getY();
-// if (height > max_height) {
-// max_height = height;
-// }
-// break;
-// }
-// }
-// }
-//
-// return max_height;
-// }

@@ -8,7 +8,7 @@ import field.Shape;
 import moves.MoveType;
 
 public class StrategyProcessor {
-        Shape currentShape;
+        Shape thisShape;
         Shape nextShape;
         Field field;
         Result best;
@@ -17,7 +17,7 @@ public class StrategyProcessor {
         double[] parameters;
 
         public StrategyProcessor(Shape currentShape, Shape nextShape, Field field, int combo, double[] parameters) {
-                this.currentShape = currentShape;
+                this.thisShape = currentShape;
                 this.nextShape = nextShape;
                 this.field = field;
                 this.best = new Result();
@@ -32,8 +32,8 @@ public class StrategyProcessor {
 
         private void searchSpace() {
 
-                field.erradicateShape(currentShape);
-                Shape tempCurrentShape = currentShape.copyShape(field);
+                field.erradicateShape(thisShape);
+                Shape tempCurrentShape = thisShape.copyShape(field);
 
                 // Drop until two above.
                 int position = field.getMaxHeight();
@@ -100,7 +100,7 @@ public class StrategyProcessor {
                         }
 
                         
-                        evaluateFinalPosition(currentShape, this.combo);
+                        evaluateFinalPosition(currentShape);
 
                         /*
                          * CHECKING FOR FINAL 'Scooting' of the piece under others.
@@ -110,19 +110,17 @@ public class StrategyProcessor {
                                 tempResult.addMove(MoveType.RIGHT);
                                 currentShape.oneRight();
                                 
-                                evaluateFinalPosition(currentShape, this.combo);
+                                evaluateFinalPosition(currentShape);
                                 tempResult.removeLastMove();
                                 currentShape.oneLeft();
 
                         }
-//                        if(tempResult.lastMove() == MoveType.RIGHT){
-//                        }
 //                        
                         // CHECKING LEFT
                         if(field.canMoveLeft(currentShape)){
                                 tempResult.addMove(MoveType.LEFT);
                                 currentShape.oneLeft();
-                                evaluateFinalPosition(currentShape, this.combo);
+                                evaluateFinalPosition(currentShape);
                                 tempResult.removeLastMove();
                                 currentShape.oneRight();
                         }
@@ -145,6 +143,8 @@ public class StrategyProcessor {
 //                                tempResult.removeLastMove();
 //                        }
                         
+
+                        
                         while (tempResult.lastMove() == MoveType.DOWN) {
                                 currentShape.oneUp();
                                 tempResult.removeLastMove();
@@ -156,11 +156,17 @@ public class StrategyProcessor {
                 while (tempResult.lastMove() == MoveType.RIGHT) {
                         currentShape.oneLeft();
                         tempResult.removeLastMove();
+                        moveRightCount--;
+                }
+                // In the beginning we remove lefts to act has 'moveRight'. We kept track of the number
+                // rights but forgot to re-add the left.
+                for(int i = 0; i <moveRightCount; i++){
+                        tempResult.addMove(MoveType.LEFT);
+                        currentShape.oneLeft();
                 }
         }
 
-        private void evaluateFinalPosition(Shape currentShape, int combo) {
-                // TODO Auto-generated method stub
+        private void evaluateFinalPosition(Shape currentShape) {
 
                 Field tempField = field.copyField();
 
@@ -172,8 +178,8 @@ public class StrategyProcessor {
                  * ONE LOOKAHEAD
                  */
                 if (nextShape != null) {
-                         tempField.removeCompletedLines();
-                        StrategyProcessor lookaheadProcessor = new StrategyProcessor(nextShape, null, tempField, combo, parameters);
+                        int removedLines  = tempField.removeCompletedLines();
+                        StrategyProcessor lookaheadProcessor = new StrategyProcessor(nextShape, null, tempField, combo + removedLines, parameters);
                         lookaheadProcessor.run();
                         tempResult.score +=  lookaheadProcessor.getBest().score;
                 }
