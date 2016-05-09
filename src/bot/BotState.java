@@ -146,4 +146,8 @@ public class BotState {
 	public int getRound() {
 		return this.round;
 	}
+	
+	public Player getMyBot(){
+	        return this.myBot;
+	}
 }

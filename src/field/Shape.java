@@ -234,7 +234,7 @@ public class Shape {
                                 newShape[x][y] = new Cell();
                         }
                 }
-                return newShape;
+                return newShape; 
         }
 
         public void setLocation(int x, int y) {
@@ -276,7 +276,9 @@ public class Shape {
                 return false;
         }
 
-
+        public int getSize(){
+                return this.size;
+        }
 
 
 

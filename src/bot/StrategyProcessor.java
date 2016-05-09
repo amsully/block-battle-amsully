@@ -13,13 +13,17 @@ public class StrategyProcessor {
         Field field;
         Result best;
         Result tempResult;
+        int combo;
+        double[] parameters;
 
-        public StrategyProcessor(Shape currentShape, Shape nextShape, Field field) {
+        public StrategyProcessor(Shape currentShape, Shape nextShape, Field field, int combo, double[] parameters) {
                 this.currentShape = currentShape;
                 this.nextShape = nextShape;
                 this.field = field;
                 this.best = new Result();
                 this.tempResult = new Result();
+                this.combo = combo;
+                this.parameters = parameters;
         }
 
         public void run() {
@@ -96,7 +100,7 @@ public class StrategyProcessor {
                         }
 
                         
-                        evaluateFinalPosition(currentShape);
+                        evaluateFinalPosition(currentShape, this.combo);
 
                         /*
                          * CHECKING FOR FINAL 'Scooting' of the piece under others.
@@ -106,7 +110,7 @@ public class StrategyProcessor {
                                 tempResult.addMove(MoveType.RIGHT);
                                 currentShape.oneRight();
                                 
-                                evaluateFinalPosition(currentShape);
+                                evaluateFinalPosition(currentShape, this.combo);
                                 tempResult.removeLastMove();
                                 currentShape.oneLeft();
 
@@ -118,7 +122,7 @@ public class StrategyProcessor {
                         if(field.canMoveLeft(currentShape)){
                                 tempResult.addMove(MoveType.LEFT);
                                 currentShape.oneLeft();
-                                evaluateFinalPosition(currentShape);
+                                evaluateFinalPosition(currentShape, this.combo);
                                 tempResult.removeLastMove();
                                 currentShape.oneRight();
                         }
@@ -155,21 +159,21 @@ public class StrategyProcessor {
                 }
         }
 
-        private void evaluateFinalPosition(Shape currentShape) {
+        private void evaluateFinalPosition(Shape currentShape, int combo) {
                 // TODO Auto-generated method stub
 
                 Field tempField = field.copyField();
 
                 tempField.setBlock(currentShape);
 
-                tempResult.score = tempField.evaluateScore(currentShape);
+                tempResult.score = tempField.evaluateScore(currentShape, combo, parameters);
 
                 /*
                  * ONE LOOKAHEAD
                  */
                 if (nextShape != null) {
                          tempField.removeCompletedLines();
-                        StrategyProcessor lookaheadProcessor = new StrategyProcessor(nextShape, null, tempField);
+                        StrategyProcessor lookaheadProcessor = new StrategyProcessor(nextShape, null, tempField, combo, parameters);
                         lookaheadProcessor.run();
                         tempResult.score +=  lookaheadProcessor.getBest().score;
                 }

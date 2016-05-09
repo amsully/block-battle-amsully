@@ -49,7 +49,9 @@ import moves.MoveType;
 
 public class BotStarter {
 
-        public BotStarter() {
+        double[] parameters;
+        public BotStarter(double[] parameters) {
+                this.parameters = parameters;
         }
 
         /**
@@ -77,7 +79,8 @@ public class BotStarter {
                 Point nLocation = (nType == ShapeType.O) ? new Point(4, -1) : new Point(3, -1);
                 nextShape = new Shape(nType, field, nLocation);
                 
-                StrategyProcessor processor = new StrategyProcessor(currentShape, nextShape, field);
+                // Current Combo
+                StrategyProcessor processor = new StrategyProcessor(currentShape, nextShape, field, state.getMyBot().getCombo(), parameters);
                 processor.run();
 
                 Result bestResult = processor.getBest();
@@ -91,7 +94,13 @@ public class BotStarter {
 
 
         public static void main(String[] args) {
-                BotParser parser = new BotParser(new BotStarter());
+                double[] parameters = new double[10];
+                for(int i = 0 ; i < args.length; i++){
+                        parameters[i] = Double.parseDouble(args[i]);
+                }
+                
+                
+                BotParser parser = new BotParser(new BotStarter(parameters));
                 parser.run();
         }
 

@@ -214,7 +214,7 @@ public class Field {
 
         }
 
-        public double evaluateScore(Shape currentShape) {
+        public double evaluateScore(Shape currentShape, int combo, double parameters[]) {
 
                 double adjacent = getAdjacentBlockCount(currentShape);
                 double completedRows = getCompletedRows(currentShape);
@@ -223,20 +223,16 @@ public class Field {
                 double averageHeight = getAverageHeight();
 
                 double a = -0.51006, b = 0.760666, c = -0.35663, d = -0.184483;
+                // double score = (a * aggregateHeight) + (b * completedRows) +
+                // (c * holes) + (d * bumpiness)
+                // + (.3 * adjacent) + (-.1*maxHeight);
+                double score = (parameters[0] * aggregateHeight) + (parameters[1] * completedRows)
+                                + (parameters[2] * holes) + (parameters[3] * bumpiness) + (parameters[4] * adjacent)
+                                + (parameters[5] * maxHeight);
 
-                
-                // return aggregateHeight * -1;
-//                write("Holes: " + holes);
-//                write("Bumps: " + bumpiness);
-//                write("heigh: " + aggregateHeight);
-//                write("compl: " + completedRows);
-                double score = (a * aggregateHeight) + (b * completedRows) + (c * holes) + (d * bumpiness)
-                                
-                                + (.3 * adjacent) + (-.1 *maxHeight);
                 return score;
 
                 // double averageHeight = getAverageHeight();
-
                 // double resultingHeight = maxHeight - completedRows;
                 // double hole_parameter = -20 / Math.pow(maxHeight, 2);
                 // return (averageHeight * -.5) + (resultingHeight * -10) +
@@ -248,6 +244,12 @@ public class Field {
                 // + (holes * -20);
 
                 // return (averageHeight * -.5) + (holes *hole_parameter);
+                // if(combo == 0){
+                // combo = 1;
+                // }
+                // return (this.getHeight() - currentShape.getLocation().getY()
+                // - currentShape.getSize() * -5)+
+                // (completedRows * combo * 3) + (holes * -10);
         }
 
         private double getAggregateHeight_SetBump() {
@@ -273,7 +275,7 @@ public class Field {
                 for (int i = 1; i < heights.size(); i++) {
                         double curr = heights.get(i);
 
-                        temp += Math.abs(curr - prev);
+                        temp += Math.sqrt(Math.abs(curr - prev));
 
                         prev = curr;
                 }
@@ -322,7 +324,9 @@ public class Field {
 
                         for (int i = 0; i < grid.length; i++) {
 
-                                if (grid[i][v].isEmpty() || grid[i][v].isShape()) {
+                                if (grid[i][v].isEmpty() || grid[i][v].isSolid()) {// ||
+                                                                                   // grid[i][v].isShape())
+                                                                                   // {
                                         completeRow = false;
                                         break;
                                 }
@@ -392,21 +396,21 @@ public class Field {
                 }
         }
 
-        public void write(String line) {
-                try {
-                        FileWriter writer = new FileWriter("starter_out.txt", true);
-                        writer.write(line);
-                        writer.write("\n");
-                        writer.close();
-                } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                }
-        }
+//        public void write(String line) {
+//                try {
+//                        FileWriter writer = new FileWriter("starter_out.txt", true);
+//                        writer.write(line);
+//                        writer.write("\n");
+//                        writer.close();
+//                } catch (IOException e) {
+//                        // TODO Auto-generated catch block
+//                        e.printStackTrace();
+//                }
+//        }
 
         public void removeCompletedLines() {
                 // TODO Auto-generated method stub
-                
+
         }
 }
 
