@@ -81,40 +81,68 @@ public class BotStarter {
                 
                 // Current Combo
                 StrategyProcessor processor = new StrategyProcessor(currentShape, nextShape, field, state.getMyBot().getCombo(), parameters);
+               
                 processor.run();
-
                 Result bestResult = processor.getBest();
+                                
+                ArrayList<MoveType> moves = new ArrayList<MoveType>();
+
+                // Initial Rotation
+                int rotations = bestResult.getRotationsRight();
+                for(int i = 0; i < rotations;i++){
+                        moves.add(MoveType.TURNRIGHT);
+                }
+
+                // Initial Right or Left
+                int left = bestResult.getLeft();
+                if(left < 0){
+                        for(int i = 0; i < Math.abs(left); i++){
+                                moves.add(MoveType.RIGHT);
+                        }
+                }else{
+                        for(int i = 0; i < left; i++){
+                                moves.add(MoveType.LEFT);
+                        }
+                }
                 
+                for(int i = 0; i < bestResult.getDown(); i++){
+                        moves.add(MoveType.DOWN);
+                }
                 
-                bestResult.moves.add(MoveType.DOWN);
-                
-//                write("ROUND " + state.getRound() + ": " +  bestResult.moves.toString());
-                return bestResult.moves;
+                if(bestResult.getFloor_rotationsLeft() == 1){
+                        moves.add(MoveType.TURNLEFT);
+                }
+                if(bestResult.getFloor_rotationsRight() == 1){
+                        moves.add(MoveType.TURNRIGHT);
+                }
+   
+                write("Round " + state.getRound() + ": " +moves.toString());
+                return moves;
         }
 
 
         public static void main(String[] args) {
                 double[] parameters = new double[10];
-                for(int i = 0 ; i < args.length; i++){
-                        parameters[i] = Double.parseDouble(args[i]);
-                }
+//                for(int i = 0 ; i < args.length; i++){
+//                        parameters[i] = Double.parseDouble(args[i]);
+//                }
                 
                 
                 BotParser parser = new BotParser(new BotStarter(parameters));
                 parser.run();
         }
 
-//        public void write(String line) {
-//                try {
-//                        FileWriter writer = new FileWriter("starter_out.txt", true);
-//                        writer.write(line);
-//                        writer.write("\n");
-//                        writer.close();
-//                } catch (IOException e) {
-//                        // TODO Auto-generated catch block
-//                        e.printStackTrace();
-//                }
-//        }
+        public void write(String line) {
+                try {
+                        FileWriter writer = new FileWriter("starter_out.txt", true);
+                        writer.write(line);
+                        writer.write("\n");
+                        writer.close();
+                } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                }
+        }
 
 
 }

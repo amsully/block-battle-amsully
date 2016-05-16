@@ -70,10 +70,10 @@ public class Shape {
 
                 this.setBlockLocations();
         }
-        
+
         public void turnLeft(int turns) {
                 // TODO Auto-generated method stub
-                for(int i = 0; i < turns; i++){
+                for (int i = 0; i < turns; i++) {
                         this.turnLeft();
                 }
         }
@@ -90,14 +90,13 @@ public class Shape {
 
                 this.setBlockLocations();
         }
-        
+
         public void turnRight(int turns) {
                 // TODO Auto-generated method stub
-                for(int i = 0; i < turns; i++){
+                for (int i = 0; i < turns; i++) {
                         this.turnRight();
                 }
         }
-
 
         public void oneDown() {
 
@@ -234,7 +233,7 @@ public class Shape {
                                 newShape[x][y] = new Cell();
                         }
                 }
-                return newShape; 
+                return newShape;
         }
 
         public void setLocation(int x, int y) {
@@ -261,25 +260,50 @@ public class Shape {
                 return (this.type == ShapeType.I) ? 2 : (this.type == ShapeType.O) ? 1 : 4;
         }
 
-        public Shape copyShape(Field currentField) {
+        public Shape copyShape() {
 
-                return new Shape(this.type, currentField, this.location);
+                Shape newShape = new Shape(this.type, this.field, new Point(this.location.x, this.location.y));
+                int counter = 0;
+
+                // in case the cloned shape was rotated, copy the cells to clone
+                // this change
+                for (int y = 0; y < size; y++)
+                        for (int x = 0; x < size; x++) {
+                                switch (this.shape[x][y].getState()) {
+                                case EMPTY:
+                                        newShape.shape[x][y].setEmpty();
+                                        break;
+                                case SHAPE:
+                                        newShape.shape[x][y].setShape();
+                                        newShape.blocks[counter++] = newShape.shape[x][y];
+                                        break;
+                                case BLOCK:
+                                        newShape.shape[x][y].setBlock();
+                                        break;
+                                case SOLID:
+                                        newShape.shape[x][y].setSolid();
+                                        break;
+                                case TEMP:
+                                        break;
+                                }
+                        }
+
+                newShape.setBlockLocations();
+                return newShape;
         }
 
         public boolean isOutOfBoundaries(Field field2) {
-                
-                for(Cell c : this.getBlocks()){
-                        if( c.isOutOfBoundaries(field2) && c.getLocation().y != -1){
+
+                for (Cell c : this.getBlocks()) {
+                        if (c.isOutOfBoundaries(field2) && c.getLocation().y != -1) {
                                 return true;
                         }
                 }
                 return false;
         }
 
-        public int getSize(){
+        public int getSize() {
                 return this.size;
         }
-
-
 
 }

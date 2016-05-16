@@ -60,8 +60,10 @@ public class Cell {
 	
 	public void setShape() {
 		this.state = CellType.SHAPE;
-	}
-	
+	}      
+	public void setBlock() {
+                this.state = CellType.BLOCK;
+        }
         public void setEmpty() {
                 // TODO Auto-generated method stub
                 this.state = CellType.EMPTY;
@@ -97,4 +99,9 @@ public class Cell {
 	public Point getLocation() {
 		return this.location;
 	}
+
+        public void setSolid() {
+                // TODO Auto-generated method stub
+                this.state = CellType.SOLID;
+        }
 }

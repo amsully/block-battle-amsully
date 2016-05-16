@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.sun.corba.se.impl.protocol.ServantCacheLocalCRDBase;
+
 import field.Cell;
 import moves.MoveType;
 
@@ -84,7 +86,7 @@ public class Field {
         // Updates the max. This does not consider 'shape' blocks.
         private void updateMax(Cell cell, int y) {
                 // TODO Auto-generated method stub
-                if (!cell.isEmpty() && !cell.isShape() && (20 - y) > maxHeight) {
+                if (cell.isBlock() && (20 - y) > maxHeight) {
                         maxHeight = 20 - y;
                 }
         }
@@ -103,64 +105,15 @@ public class Field {
                 return this.width;
         }
 
-        public boolean canMoveLeft(Shape currentShape) {
-                // TODO Auto-generated method stub
-                currentShape.oneLeft();
+        public boolean isValidPiece(Shape currentShape) {
                 boolean result = true;
                 for (Cell cellBlock : currentShape.getBlocks()) {
-                        Cell fieldBlock = getCell(cellBlock.getLocation().x, cellBlock.getLocation().y);
 
-                        if (fieldBlock == null && cellBlock.getLocation().y != -1) {
-                                result = false;
-                                break;
-                        } else if (fieldBlock != null && !fieldBlock.isEmpty() && !fieldBlock.isShape()) {
+                        if (cellBlock.hasCollision(this) || cellBlock.isOutOfBoundaries(this)) {
                                 result = false;
                                 break;
                         }
                 }
-
-                currentShape.oneRight();
-                return result;
-        }
-
-        public boolean canMoveRight(Shape currentShape) {
-                // TODO Auto-generated method stub
-
-                currentShape.oneRight();
-                boolean result = true;
-                for (Cell cellBlock : currentShape.getBlocks()) {
-
-                        Cell fieldBlock = getCell(cellBlock.getLocation().x, cellBlock.getLocation().y);
-
-                        if (fieldBlock == null && cellBlock.getLocation().y != -1) {
-                                result = false;
-                                break;
-                        } else if (fieldBlock != null && !fieldBlock.isEmpty() && !fieldBlock.isShape()) {
-                                result = false;
-                                break;
-                        }
-                }
-
-                currentShape.oneLeft();
-                return result;
-        }
-
-        public boolean canMoveDown(Shape currentShape) {
-                // TODO Auto-generated method stub
-                currentShape.oneDown();
-                boolean result = true;
-                for (Cell cellBlock : currentShape.getBlocks()) {
-                        Cell fieldBlock = getCell(cellBlock.getLocation().x, cellBlock.getLocation().y);
-                        if (fieldBlock == null && cellBlock.getLocation().y != -1) {
-                                result = false;
-                                break;
-                        } else if (fieldBlock != null && !fieldBlock.isEmpty() && !fieldBlock.isShape()) {
-                                result = false;
-                                break;
-                        }
-                }
-
-                currentShape.oneUp();
                 return result;
         }
 
@@ -201,65 +154,250 @@ public class Field {
                 Cell[] blocks = currentShape.getBlocks();
 
                 for (Cell c : blocks) {
-                        Cell fieldCell = getCell(c.getLocation().x, c.getLocation().y);
 
-                        if (fieldCell == null)
-                                continue;
+                        setCell(c);
 
-                        fieldCell.setShape();
+                }
 
-                        if (20 - fieldCell.getLocation().y > maxHeight)
-                                maxHeight = 20 - fieldCell.getLocation().y;
+        }
+
+        private void setCell(Cell cell) {
+                int x = (int) cell.getLocation().getX();
+                int y = (int) cell.getLocation().getY();
+                if (x < 0 || x >= this.width || y < 0 || y >= this.height)
+                        return;
+                this.grid[x][y].setBlock();
+
+                if (20 - y > maxHeight) {
+                        maxHeight = 20 - y;
                 }
 
         }
 
         public double evaluateScore(Shape currentShape, int combo, double parameters[]) {
 
-//                double adjacent = getAdjacentBlockCount(currentShape);
+                double adjacent = getAdjacentBlockCount(currentShape);
+
                 double completedRows = getCompletedRows(currentShape);
                 double holes = getHoles(currentShape);
-//                double aggregateHeight = getAggregateHeight_SetBump();
-//                double averageHeight = getAverageHeight();
-
-//                double a = -0.51006, b = 0.760666, c = -0.35663, d = -0.184483;
-
-////                 double score = (a * aggregateHeight) + (b * completedRows) +
-////                 (c * holes) + (d * bumpiness)
-////                 + (.3 * adjacent) + (-.1*maxHeight);
-////                parameters[0] = -0.15846462326122746;
-////                parameters[1] = 0.3044248703986045;
-////                parameters[2] = 0.08060434639738116;
-////                parameters[3] = -0.08577848168303195;
-////                parameters[4] = 0.20942787648242758;
-////                parameters[5] = -0.16435282856357042;
-//                
-//                double score = (parameters[0] * aggregateHeight) + (parameters[1] * completedRows)
-//                                + (parameters[2] * holes) + (parameters[3] * bumpiness) + (parameters[4] * adjacent)
-//                                + (parameters[5] * maxHeight);
-//
-//                return score;
-
+                double aggregateHeight = getAggregateHeight_SetBump();
                 // double averageHeight = getAverageHeight();
-//                 double resultingHeight = maxHeight - completedRows;
-//                 double hole_parameter = -20 / Math.pow(maxHeight, 2);
-//                 double hole_parameter = -35 / Math.pow(maxHeight, 2);
-//
-//                 return (averageHeight * -.5) + (resultingHeight * -10) +
-//                 (adjacent * 5) + (completedRows * 2 )
-//                 + (holes * hole_parameter);
 
-//                 return (averageHeight * -.5) + (resultingHeight * -10) +
-//                 (adjacent * 5) + (completedRows * combo)
-//                 + (holes * -20);
-                 
-                // return (averageHeight * -.5) + (holes *hole_parameter);
-                // if(combo == 0){
-                // combo = 1;
-                // }
-                 return (this.getHeight() - currentShape.getLocation().getY()
-                 - currentShape.getSize()) * -5+
-                 (completedRows * combo * 3) + (holes * -10);
+                // double score = (a * aggregateHeight) + (b * completedRows) +
+                // (c * holes) + (d * bumpiness)
+                // // + (.3 * adjacent) + (-.1*maxHeight);
+                parameters[0] = -4;
+                parameters[1] = -7;
+                parameters[2] = 4;
+                parameters[3] = 3;
+                parameters[4] = -7;
+                parameters[5] = -5;
+                parameters[6] = 3;
+                parameters[7] = 0;
+
+                double a = -4, b = -7, c = 4, d = 3, e = -7, f = -5, g = 3, h = 0;
+
+                double averageHeight = getAverageHeight();
+                double resultingHeight = maxHeight - completedRows;
+
+                // ALGORITHM RUN:
+
+                double score = (averageHeight * parameters[0]) + (resultingHeight * parameters[1])
+                                + (adjacent * parameters[2]) + (completedRows * combo * parameters[3])
+                                + (holes * getHoleParameter(parameters[4]))
+                                + (parameters[5] * (this.getHeight() - currentShape.getLocation().getY()
+                                                - currentShape.getSize()))
+                                + (bumpiness * parameters[6]) + (aggregateHeight * parameters[7])
+                                + getTSpinSlot(parameters[8], parameters[9]);
+
+                /*
+                 * Score focusing on TSPIN
+                 */
+                // double score = getTSpinSlot();
+
+                // write(score + "" );
+                return score;
+                // INCLUDES NEW CALCULATION FOR HOLES
+                // return (adjacent * 5) + (completedRows * combo * 2 )
+                // + (holes * -10) + (-3 *(this.getHeight() -
+                // currentShape.getLocation().getY()
+                // - currentShape.getSize()) ) + (-2 * bumpiness) + (-5 *
+                // aggregateHeight);
+
+                // return (averageHeight * -.5) + (resultingHeight * -1) +
+                // (adjacent * 2) + (completedRows * combo * 5 )
+                // + (holes * -20) + (-10 *(this.getHeight() -
+                // currentShape.getLocation().getY()
+                // - currentShape.getSize()) );
+
+                // return ((this.getHeight() - currentShape.getLocation().getY()
+                // - currentShape.getSize()) * -5)
+                // + (completedRows * combo * 3) + (holes * -10);
+
+                // return (averageHeight * -.5) + (resultingHeight * -10) +
+                // (adjacent * 5) + (completedRows * combo)
+                // + (holes * -20);
+
+                /*
+                 * A
+                 */
+                // return ((this.getHeight() - currentShape.getLocation().getY()
+                // - currentShape.getSize()) * -5)+
+                // (completedRows * combo * 3) + (holes * -10);
+
+                // return score;
+        }
+
+        private double getHoleParameter(double d) {
+                // TODO Auto-generated method stub
+                return -20 / Math.pow(maxHeight, d);
+        }
+
+        /*
+         * We can weight each feature a little more. 10, 100, 1000. 10 points
+         * for an empty row (add an exception that it is isolated). 100 points
+         * for 3 emptys above it. 1000 points for a successful completion.
+         */
+        private double getTSpinSlot(double parameters, double parameters2) {
+                int bottomRow = 19;
+                int midRow = 18;
+                int highRow = 17;
+
+                int tSpinScore = 0;
+                for (int i = highRow; i >= 0; i--) {
+
+                        tSpinScore += getTSpinSection(bottomRow, midRow, highRow);
+
+                        highRow--;
+                        midRow--;
+                        bottomRow--;
+                }
+
+                return tSpinScore;
+        }
+
+        private double getTSpinSection(int bottomRow, int midRow, int highRow) {
+                // TODO Auto-generated method stub
+                if (this.getCell(0, bottomRow).isSolid()) {
+                        return 0;
+                }
+
+                int score = 0;
+
+                // TODO: NOTE: Now only basing it on the central column.
+                for (int col = 5; col <= 5; col++) {
+                        if (getCell(col, bottomRow).isEmpty()) {
+                                score += 100;
+                                if (firstLevelScores(col, bottomRow)) {
+                                        score += 1000;
+
+                                        if (midRowValid(col, midRow)) {
+
+                                                score += 10000;
+
+                                                if (highRowValid(col, highRow)) {
+                                                        if (colIsClear(col, highRow)) {
+                                                                write("Gold");
+                                                                score += 100000;
+
+                                                        }
+                                                } else {
+                                                        score -= 10000;
+                                                }
+                                        } else {
+                                                score -= 1000;
+                                        }
+                                } else {
+                                        score -= 100;
+                                }
+
+                        } else {
+                                score -= 10;
+                        }
+                }
+
+                return score;
+        }
+
+        private boolean firstLevelScores(int col, int bottomRow) {
+                // TODO Auto-generated method stub
+
+                if (col == 0 || col == this.getWidth() - 1)
+                        return false;
+
+                int left = col - 1;
+                int right = col + 1;
+
+                Cell leftCell = this.getCell(left, bottomRow);
+                Cell rightCell = this.getCell(right, bottomRow);
+
+                if (leftCell.isEmpty() || rightCell.isEmpty()) {
+                        return false;
+                }
+                return true;
+        }
+
+        // Method to determine if we can fit a t-block into the slot.
+        private boolean colIsClear(int col, int highRow) {
+                // TODO Auto-generated method stub
+                int sideCol = col;
+                if (this.getCell(sideCol - 1, highRow).isEmpty()) {
+                        sideCol++; // We need to check the right col.
+                } else {
+                        sideCol--; // We need to check the left col.
+                }
+
+                int high = highRow;
+                while (high != 0) {
+
+                        Cell side = this.getCell(sideCol, high);
+                        Cell mid = this.getCell(col, high);
+
+                        if (!side.isEmpty() || !mid.isEmpty()) {
+                                return false;
+                        }
+
+                        high--;
+                }
+
+                return true;
+        }
+
+        // n = none, l = left, r = right
+        private Boolean highRowValid(int col, int highRow) {
+                // TODO Auto-generated method stub
+                if (highRow < 0)
+                        return false; // Out of bounds
+
+                if (!this.getCell(col, highRow).isEmpty())
+                        return false; // Mid col blocked.
+
+                Cell left = this.getCell(col - 1, highRow);
+                Cell right = this.getCell(col + 1, highRow);
+
+                if (left.isEmpty() && !right.isEmpty()) {
+                        return true; // Rotate right needed.
+                } else if (right.isEmpty() && !left.isEmpty()) {
+                        return true; // Rotate left needed.
+                }
+                return false;
+        }
+
+        private boolean midRowValid(int col, int midRow) {
+                // TODO Auto-generated method stub
+                if (col == 0 || col == this.width - 1) {
+                        return false;
+                }
+
+                Cell left = this.getCell(col - 1, midRow);
+                Cell mid = this.getCell(col, midRow);
+                Cell right = this.getCell(col + 1, midRow);
+
+                if (left.isEmpty() && mid.isEmpty() && right.isEmpty()) {
+                        return true;
+                }
+
+                return false;
         }
 
         private double getAggregateHeight_SetBump() {
@@ -322,7 +460,7 @@ public class Field {
                 return totalAttached;
         }
 
-        private int getCompletedRows(Shape currentShape) {
+        public int getCompletedRows(Shape currentShape) {
                 // TODO Auto-generated method stub
                 int rows = 0;
                 for (Cell c : currentShape.getBlocks()) {
@@ -334,9 +472,7 @@ public class Field {
 
                         for (int i = 0; i < this.getWidth(); i++) {
 
-                                if (grid[i][v].isEmpty() || grid[i][v].isSolid()) {// ||
-                                                                                   // grid[i][v].isShape())
-                                                                                   // {
+                                if (grid[i][v].isEmpty() || grid[i][v].isSolid()) {
                                         completeRow = false;
                                         break;
                                 }
@@ -350,18 +486,21 @@ public class Field {
                 return rows;
         }
 
-        private int getHoles(Shape currentShape) {
+        public int getHoles(Shape currentShape) {
                 // TODO Auto-generated method stub
                 int hole_count = 0;
 
                 for (int i = 0; i < this.width; i++) {
                         boolean countHole = false;
+                        int multiplier = 0;
                         // TODO : OPTIMIZE SO WE DOnT ITERATE OVER EVERYTHING
                         for (int j = 0; j < this.height; j++) {
 
                                 if (grid[i][j].isBlock()) {
                                         countHole = true;
                                 } else if (countHole && grid[i][j].isEmpty()) {
+                                        // multiplier+=1;
+                                        // hole_count+=multiplier;
                                         hole_count++;
                                 }
 
@@ -398,49 +537,47 @@ public class Field {
                         if (fieldCell == null)
                                 continue;
 
-                        fieldCell.setEmpty();// = new Cell(c.getLocation().x,
-                                             // c.getLocation().y,
-                                             // CellType.EMPTY);
+                        fieldCell.setEmpty();
 
                 }
         }
 
-//        public void write(String line) {
-//                try {
-//                        FileWriter writer = new FileWriter("starter_out.txt", true);
-//                        writer.write(line);
-//                        writer.write("\n");
-//                        writer.close();
-//                } catch (IOException e) {
-//                        // TODO Auto-generated catch block
-//                        e.printStackTrace();
-//                }
-//        }
+        public void write(String line) {
+                try {
+                        FileWriter writer = new FileWriter("starter_out.txt", true);
+                        writer.write(line);
+                        writer.write("\n");
+                        writer.close();
+                } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                }
+        }
 
         public int removeCompletedLines() {
                 // TODO Auto-generated method stub
                 int total = 0;
-                
-                for(int row = 0; row < this.height; row++){
-                        for(int col = 0; col < this.width; col ++){
-                                if(!this.grid[col][row].isBlock()){
+
+                for (int row = 0; row < this.height; row++) {
+                        for (int col = 0; col < this.width; col++) {
+                                if (!this.grid[col][row].isBlock()) {
                                         break;
                                 }
-                                if(col == this.width-1){
+                                if (col == this.width - 1) {
                                         total++;
                                         Cell bringDown;
-                                        for(int i = 0; i < this.width; i++){
+                                        for (int i = 0; i < this.width; i++) {
                                                 this.grid[i][row].setEmpty();
-                                                for(int j = row-1; j >= 0; j--){
-                                                        bringDown = this.grid[i][j+1];
-                                                        this.grid[i][j+1] = this.grid[i][j];
+                                                for (int j = row - 1; j >= 0; j--) {
+                                                        bringDown = this.grid[i][j + 1];
+                                                        this.grid[i][j + 1] = this.grid[i][j];
                                                         this.grid[i][j] = bringDown;
                                                 }
                                         }
                                 }
                         }
                 }
-                
+
                 return total;
         }
 }
