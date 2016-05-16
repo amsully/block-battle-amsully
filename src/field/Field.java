@@ -202,48 +202,17 @@ public class Field {
 
                 // ALGORITHM RUN:
 
-                double score = (averageHeight * parameters[0]) + (resultingHeight * parameters[1])
-                                + (adjacent * parameters[2]) + (completedRows * combo * parameters[3])
+                double score = (averageHeight * a) + (resultingHeight * b)
+                                + (adjacent * c) + (completedRows * combo * [3])
                                 + (holes * getHoleParameter(parameters[4]))
                                 + (parameters[5] * (this.getHeight() - currentShape.getLocation().getY()
                                                 - currentShape.getSize()))
                                 + (bumpiness * parameters[6]) + (aggregateHeight * parameters[7])
                                 + getTSpinSlot(parameters[8], parameters[9]);
 
-                /*
-                 * Score focusing on TSPIN
-                 */
-                // double score = getTSpinSlot();
-
-                // write(score + "" );
                 return score;
-                // INCLUDES NEW CALCULATION FOR HOLES
-                // return (adjacent * 5) + (completedRows * combo * 2 )
-                // + (holes * -10) + (-3 *(this.getHeight() -
-                // currentShape.getLocation().getY()
-                // - currentShape.getSize()) ) + (-2 * bumpiness) + (-5 *
-                // aggregateHeight);
 
-                // return (averageHeight * -.5) + (resultingHeight * -1) +
-                // (adjacent * 2) + (completedRows * combo * 5 )
-                // + (holes * -20) + (-10 *(this.getHeight() -
-                // currentShape.getLocation().getY()
-                // - currentShape.getSize()) );
 
-                // return ((this.getHeight() - currentShape.getLocation().getY()
-                // - currentShape.getSize()) * -5)
-                // + (completedRows * combo * 3) + (holes * -10);
-
-                // return (averageHeight * -.5) + (resultingHeight * -10) +
-                // (adjacent * 5) + (completedRows * combo)
-                // + (holes * -20);
-
-                /*
-                 * A
-                 */
-                // return ((this.getHeight() - currentShape.getLocation().getY()
-                // - currentShape.getSize()) * -5)+
-                // (completedRows * combo * 3) + (holes * -10);
 
                 // return score;
         }
